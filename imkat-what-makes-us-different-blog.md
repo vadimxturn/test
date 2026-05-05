@@ -87,6 +87,20 @@ When the city flags something on the plans, IMKAT's engineer fixes it the same d
 
 The result: faster permits, fewer surprises, and a build that starts on schedule. For homeowners, it means one point of contact instead of three separate companies who each point at the other when something goes wrong.
 
+### The Pre-Construction Trap That Stalls Most ADU Projects
+
+Here's something most ADU builders won't tell you upfront: the construction phase isn't what takes the longest. It's everything that comes before it.
+
+Homeowners across California get stuck in pre-construction for 6, 9, sometimes 12+ months — not because their project is complicated, but because nobody on their team actually understands the local ADU laws and regulations. Every city in California interprets state ADU legislation differently. Setback requirements, lot coverage limits, height restrictions, utility connection rules, fire sprinkler mandates, parking exceptions — the regulations vary from city to city, and they change regularly.
+
+Most contractors don't specialize in ADUs, so they don't know these rules cold. They submit plans that get rejected. The architect makes corrections based on what they think the city wants. The city comes back with more revisions. Months disappear into a loop of resubmissions and waiting periods while the homeowner pays carrying costs on a project that hasn't broken ground.
+
+IMKAT's team knows the ADU regulations for dozens of California cities because that's all they work on. They know which cities require fire sprinklers for units over 500 sq ft. They know which jurisdictions allow ADUs on lots with existing non-conforming setbacks. They know the difference between what Sacramento County requires and what the City of Sacramento requires — and they submit plans that get approved the first time, or close to it.
+
+**IMKAT's goal: complete the entire process — pre-construction and construction — in 9 months total.** That includes design, engineering, permitting, and the full build. Some straightforward projects finish faster. More complex builds — steep lots, custom designs, cities with slower permit review — may take longer. But 9 months from kickoff to keys is the benchmark, and IMKAT's process is built around hitting it.
+
+Compare that to homeowners who spend 9 months just trying to get through pre-construction with a general contractor who's learning the ADU permit process on their dime.
+
 ---
 
 ## Quality and Speed — You Shouldn't Have to Choose
