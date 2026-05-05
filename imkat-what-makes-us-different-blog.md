@@ -89,11 +89,17 @@ The result: faster permits, fewer surprises, and a build that starts on schedule
 
 ---
 
-## Quality First — Not Speed First, Not Price First
+## Quality and Speed — You Shouldn't Have to Choose
 
-The ADU market in California has a race-to-the-bottom problem. Some builders compete on speed ("We'll have you permitted in 30 days!"). Others compete on price ("ADUs starting at $99,000!"). The projects that come out of those promises usually look like it.
+The ADU market in California has a race-to-the-bottom problem. Some builders compete on price ("ADUs starting at $99,000!"). The projects that come out of those promises usually look like it. Others take so long that homeowners wonder if their ADU will ever get finished.
 
-IMKAT competes on quality. That means:
+IMKAT delivers both — quality construction at a pace that most builders can't match. They've completed ADU projects with construction phases as fast as 2 months. Not 6 months. Not 9 months. Two months from breaking ground to handing over the keys.
+
+That speed isn't the result of cutting corners. It comes from doing the same thing 200+ times. When your crews build the same proven floor plans repeatedly, they know exactly what comes next. Materials are pre-ordered. Subcontractors are scheduled weeks in advance. There's no downtime between phases because the process is dialed in.
+
+Here's what that looks like in practice:
+
+**Construction timelines that actually hold.** Most ADU builders quote 4–6 months for construction and deliver in 8–10. IMKAT's fastest projects have finished in as little as 2 months because their teams aren't figuring it out as they go. They've built these models before — dozens of times.
 
 **Premium materials, not builder-grade defaults.** The finishes inside an IMKAT ADU — flooring, cabinetry, fixtures, countertops — are selected to match the quality of a well-built primary home. These aren't the cheapest options from a supply catalog. They're materials chosen because they look good, hold up, and make the unit feel like a real home instead of a converted shed.
 
@@ -103,7 +109,7 @@ IMKAT competes on quality. That means:
 
 **Clean job sites and professional crews.** Construction is messy by nature, but IMKAT treats your property with respect. Job sites are maintained, crews show up when scheduled, and homeowners get regular updates on progress. It sounds basic, but anyone who's hired a contractor knows how rare this actually is.
 
-Quality-first doesn't mean slow or overpriced. It means the finished ADU holds its value, rents at top market rates, and doesn't need repairs two years after completion. For a homeowner investing $200,000–$350,000 in a backyard home, the cost of cutting corners always shows up eventually — either in maintenance, tenant complaints, or appraisal value.
+Speed without quality is a liability. Quality without speed costs homeowners months of lost rental income. IMKAT has figured out how to deliver both — and 200+ completed projects prove it.
 
 ---
 
