@@ -87,43 +87,19 @@ When the city flags something on the plans, IMKAT's engineer fixes it the same d
 
 The result: faster permits, fewer surprises, and a build that starts on schedule. For homeowners, it means one point of contact instead of three separate companies who each point at the other when something goes wrong.
 
-### The Pre-Construction Trap That Stalls Most ADU Projects
+## Quality and Speed — From Start to Keys in 9 Months
 
-Here's something most ADU builders won't tell you upfront: the construction phase isn't what takes the longest. It's everything that comes before it.
+Most homeowners don't realize that the hardest part of building an ADU isn't construction — it's everything before it. People get stuck in pre-construction for 6, 9, sometimes 12+ months because their contractor doesn't actually know the local ADU laws. Every city in California interprets the regulations differently — setbacks, height limits, lot coverage, fire sprinklers, utility connections. When your builder is learning the rules on your dime, plans get rejected, corrections pile up, and months disappear before ground is ever broken.
 
-Homeowners across California get stuck in pre-construction for 6, 9, sometimes 12+ months — not because their project is complicated, but because nobody on their team actually understands the local ADU laws and regulations. Every city in California interprets state ADU legislation differently. Setback requirements, lot coverage limits, height restrictions, utility connection rules, fire sprinkler mandates, parking exceptions — the regulations vary from city to city, and they change regularly.
+IMKAT knows these regulations cold for dozens of California cities because ADUs are all they do. Plans get submitted right the first time, permits move faster, and construction starts on schedule.
 
-Most contractors don't specialize in ADUs, so they don't know these rules cold. They submit plans that get rejected. The architect makes corrections based on what they think the city wants. The city comes back with more revisions. Months disappear into a loop of resubmissions and waiting periods while the homeowner pays carrying costs on a project that hasn't broken ground.
+**The goal: 9 months from kickoff to keys.** That covers everything — design, engineering, permitting, and the full build. Some straightforward projects finish faster. More complex builds with steep lots, custom designs, or slower city review may take longer. But 9 months is the benchmark.
 
-IMKAT's team knows the ADU regulations for dozens of California cities because that's all they work on. They know which cities require fire sprinklers for units over 500 sq ft. They know which jurisdictions allow ADUs on lots with existing non-conforming setbacks. They know the difference between what Sacramento County requires and what the City of Sacramento requires — and they submit plans that get approved the first time, or close to it.
+Once construction starts, IMKAT moves fast. They've finished construction phases in as little as 2 months. That speed comes from building the same proven floor plans 200+ times — crews know exactly what comes next, materials are pre-ordered, and there's no downtime between phases.
 
-**IMKAT's goal: complete the entire process — pre-construction and construction — in 9 months total.** That includes design, engineering, permitting, and the full build. Some straightforward projects finish faster. More complex builds — steep lots, custom designs, cities with slower permit review — may take longer. But 9 months from kickoff to keys is the benchmark, and IMKAT's process is built around hitting it.
+But fast doesn't mean cheap. IMKAT uses premium materials — not builder-grade defaults. The flooring, cabinetry, fixtures, and countertops are selected to match the quality of a well-built primary home. Every project follows the same construction standards regardless of size. And pricing is transparent — you choose a model, select your finishes, and get a real number. No low-ball estimates followed by change orders.
 
-Compare that to homeowners who spend 9 months just trying to get through pre-construction with a general contractor who's learning the ADU permit process on their dime.
-
----
-
-## Quality and Speed — You Shouldn't Have to Choose
-
-The ADU market in California has a race-to-the-bottom problem. Some builders compete on price ("ADUs starting at $99,000!"). The projects that come out of those promises usually look like it. Others take so long that homeowners wonder if their ADU will ever get finished.
-
-IMKAT delivers both — quality construction at a pace that most builders can't match. They've completed ADU projects with construction phases as fast as 2 months. Not 6 months. Not 9 months. Two months from breaking ground to handing over the keys.
-
-That speed isn't the result of cutting corners. It comes from doing the same thing 200+ times. When your crews build the same proven floor plans repeatedly, they know exactly what comes next. Materials are pre-ordered. Subcontractors are scheduled weeks in advance. There's no downtime between phases because the process is dialed in.
-
-Here's what that looks like in practice:
-
-**Construction timelines that actually hold.** Most ADU builders quote 4–6 months for construction and deliver in 8–10. IMKAT's fastest projects have finished in as little as 2 months because their teams aren't figuring it out as they go. They've built these models before — dozens of times.
-
-**Premium materials, not builder-grade defaults.** The finishes inside an IMKAT ADU — flooring, cabinetry, fixtures, countertops — are selected to match the quality of a well-built primary home. These aren't the cheapest options from a supply catalog. They're materials chosen because they look good, hold up, and make the unit feel like a real home instead of a converted shed.
-
-**Consistent construction standards.** Every project follows the same build standards regardless of size. A 400 sq ft studio gets the same attention to framing, insulation, and finish work as a 1,200 sq ft duplex. There's no "economy" tier where corners get cut.
-
-**Transparency on what things cost and why.** IMKAT doesn't low-ball the estimate to win the job and then add change orders later. Their pricing model is straightforward: you choose a model, select your package and finishes, and get a real number. The price you agree to is the price you pay.
-
-**Clean job sites and professional crews.** Construction is messy by nature, but IMKAT treats your property with respect. Job sites are maintained, crews show up when scheduled, and homeowners get regular updates on progress. It sounds basic, but anyone who's hired a contractor knows how rare this actually is.
-
-Speed without quality is a liability. Quality without speed costs homeowners months of lost rental income. IMKAT has figured out how to deliver both — and 200+ completed projects prove it.
+Speed without quality is a liability. Quality without speed costs homeowners months of lost rental income. IMKAT delivers both.
 
 ---
 
