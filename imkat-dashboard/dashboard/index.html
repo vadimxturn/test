@@ -1,0 +1,900 @@
+<title>IMKAT Growth Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..800;1,100,400&display=swap">
+<style>
+:root{
+  --bg:#F6F4F0; --panel:#FFFFFF; --panel-2:#FBFAF7;
+  --ink:#2B2A28; --ink-2:#5C5852; --ink-3:#8A847B;
+  --line:#E6E1D8; --line-2:#EFEBE4; --grid:#ECE8E1;
+  --brand:#404040; --brand-ink:#FFFFFF; --sand:#D8B389; --sand-soft:#F3E9DC;
+  --s1:#B8803F; --s2:#2A78D6; --s3:#1BAF7A; --s4:#4A3AA7; --s5:#E87BA4; --s6:#008300;
+  --neutral:#B9B3AA;
+  --good:#0B7A0B; --good-bg:#E4F3E4; --bad:#B42F2F; --bad-bg:#F8E3E1; --warn:#8A5A00; --warn-bg:#FCF0D4;
+  --shadow:0 1px 2px rgba(40,34,26,.06),0 4px 16px rgba(40,34,26,.05);
+  --r:10px;
+  --f:"Archivo",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#1B1A18; --panel:#252321; --panel-2:#2A2826;
+    --ink:#F2EFEA; --ink-2:#C6C0B7; --ink-3:#958E84;
+    --line:#3A3733; --line-2:#312F2C; --grid:#34312E;
+    --brand:#2F2F2F; --brand-ink:#FFFFFF; --sand:#D8B389; --sand-soft:#3A3024;
+    --s1:#BF8440; --s2:#3987E5; --s3:#199E70; --s4:#9085E9; --s5:#D55181; --s6:#008300;
+    --neutral:#6E6860;
+    --good:#5FCB5F; --good-bg:#1E3320; --bad:#F07A74; --bad-bg:#3A2220; --warn:#F2C35A; --warn-bg:#3A301A;
+    --shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#1B1A18; --panel:#252321; --panel-2:#2A2826;
+  --ink:#F2EFEA; --ink-2:#C6C0B7; --ink-3:#958E84;
+  --line:#3A3733; --line-2:#312F2C; --grid:#34312E;
+  --brand:#2F2F2F; --brand-ink:#FFFFFF; --sand:#D8B389; --sand-soft:#3A3024;
+  --s1:#BF8440; --s2:#3987E5; --s3:#199E70; --s4:#9085E9; --s5:#D55181; --s6:#008300;
+  --neutral:#6E6860;
+  --good:#5FCB5F; --good-bg:#1E3320; --bad:#F07A74; --bad-bg:#3A2220; --warn:#F2C35A; --warn-bg:#3A301A;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--s2);outline-offset:2px;border-radius:4px}
+
+/* ---------- header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--brand);color:var(--brand-ink)}
+.top-in{max-width:1320px;margin:0 auto;padding:12px 20px 0;display:flex;flex-direction:column;gap:10px}
+.brandrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.mark{width:30px;height:34px;flex:none}
+.word{display:flex;flex-direction:column;line-height:.9}
+.word b{font-weight:800;font-stretch:125%;font-size:22px;letter-spacing:.02em}
+.word span{font-weight:700;font-stretch:125%;font-size:10.5px;letter-spacing:.32em;color:var(--sand)}
+.brandrow .sub{font-size:12.5px;color:#CFCAC2;margin-left:auto;text-align:right}
+.brandrow .sub strong{color:#fff;font-weight:600}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;margin:0 -4px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{appearance:none;border:0;background:none;color:#D4CFC7;padding:10px 12px 12px;font-weight:600;font-size:13px;white-space:nowrap;cursor:pointer;border-bottom:3px solid transparent}
+.tab:hover{color:#fff}
+.tab[aria-selected="true"]{color:#fff;border-bottom-color:var(--sand)}
+
+/* ---------- filters */
+.filters{max-width:1320px;margin:0 auto;padding:14px 20px 4px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px}
+.chip{appearance:none;border:0;background:none;padding:5px 11px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--ink-2);cursor:pointer}
+.chip:hover{color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--brand);color:#fff}
+.sel{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-3);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.sel select,.sel input{appearance:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 26px 6px 10px;font-size:13px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--ink);
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);background-position:calc(100% - 13px) 55%,calc(100% - 9px) 55%;background-size:4px 4px;background-repeat:no-repeat}
+.sel input{padding-right:10px;background-image:none}
+.range-label{font-size:12.5px;color:var(--ink-3);margin-left:auto}
+.range-label b{color:var(--ink);font-weight:600}
+#custom[hidden]{display:none!important}
+
+/* ---------- layout */
+main{max-width:1320px;margin:0 auto;padding:10px 20px 48px}
+.page{display:flex;flex-direction:column;gap:18px}
+.banner{display:flex;gap:10px;align-items:flex-start;background:var(--warn-bg);color:var(--ink);border-radius:var(--r);padding:10px 14px;font-size:13px}
+.banner svg{flex:none;margin-top:2px;color:var(--warn)}
+h2.sec{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:6px 0 -6px}
+.grid{display:grid;gap:14px}
+.g-kpi{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.g-2{grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr))}
+.g-3{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;min-width:0}
+.card h3{margin:0;font-size:15px;font-weight:650;text-wrap:balance;letter-spacing:-.005em}
+.card .hint{margin:3px 0 12px;color:var(--ink-3);font-size:12.5px}
+.card.span2{grid-column:1/-1}
+
+/* ---------- KPI tiles */
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px 12px;display:flex;flex-direction:column;gap:4px;min-width:0;position:relative}
+.kpi .lab{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-2);font-weight:550}
+.kpi .val{font-size:28px;font-weight:700;letter-spacing:-.02em;font-stretch:108%;line-height:1.1}
+.kpi .val.na{color:var(--ink-3);font-size:20px;font-weight:600}
+.kpi .foot{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--ink-3);min-height:18px}
+.kpi.hero{background:var(--brand);border-color:var(--brand);color:#fff}
+.kpi.hero .lab,.kpi.hero .foot{color:#D6D1C9}
+.delta{display:inline-flex;align-items:center;gap:3px;font-weight:650;border-radius:5px;padding:1px 6px;font-size:11.5px}
+.delta.good{color:var(--good);background:var(--good-bg)}
+.delta.bad{color:var(--bad);background:var(--bad-bg)}
+.delta.flat{color:var(--ink-2);background:var(--line-2)}
+.kpi.hero .delta.good{background:rgba(95,203,95,.18);color:#9BE59B}
+.kpi.hero .delta.bad{background:rgba(240,122,116,.18);color:#FFB0AA}
+.kpi.hero .delta.flat{background:rgba(255,255,255,.12);color:#E6E1D9}
+.info{position:relative;display:inline-flex;width:15px;height:15px;border-radius:50%;border:1px solid currentColor;align-items:center;justify-content:center;font-size:10px;font-weight:700;cursor:help;opacity:.7;flex:none;background:none;padding:0}
+.info:hover,.info:focus-visible{opacity:1}
+.low{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);background:var(--warn-bg);border-radius:4px;padding:1px 5px}
+.kpi.hero .low{background:rgba(242,195,90,.2);color:#F6D38A}
+
+/* ---------- insights */
+.insights{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.ins{border-radius:var(--r);padding:14px 16px;background:var(--panel);border:1px solid var(--line);display:flex;gap:12px}
+.ins .pill{flex:none;width:28px;height:28px;border-radius:8px;display:grid;place-items:center}
+.ins.good .pill{background:var(--good-bg);color:var(--good)}
+.ins.bad .pill{background:var(--bad-bg);color:var(--bad)}
+.ins.do .pill{background:var(--sand-soft);color:var(--s1)}
+.ins h4{margin:0 0 3px;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.ins p{margin:0;font-size:13.5px;color:var(--ink);text-wrap:pretty}
+
+/* ---------- tables */
+.tw{overflow-x:auto;margin:0 -4px;padding:0 4px}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);text-align:right;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line-2);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+tr.total td{font-weight:700;border-top:1px solid var(--line);border-bottom:0}
+tbody tr:hover td{background:var(--panel-2)}
+.sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px;vertical-align:0}
+.muted{color:var(--ink-3)}
+.tag{display:inline-block;font-size:11px;font-weight:650;padding:2px 7px;border-radius:999px;background:var(--line-2);color:var(--ink-2)}
+.tag.ready{background:var(--sand-soft);color:var(--ink)}
+.tag.bad{background:var(--bad-bg);color:var(--bad)}
+.tag.good{background:var(--good-bg);color:var(--good)}
+.tag.warn{background:var(--warn-bg);color:var(--warn)}
+.bar-cell{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.bar-cell i{display:block;height:6px;border-radius:0 3px 3px 0;background:var(--s1);min-width:1px}
+
+/* ---------- charts */
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{fill:var(--ink-3);font-family:var(--f);font-size:11px}
+.chart .v{fill:var(--ink-2);font-weight:600}
+.chart .lbl{fill:var(--ink-2);font-size:12px}
+.chart .grid line{stroke:var(--grid);stroke-width:1}
+.chart .axis{stroke:var(--line);stroke-width:1}
+.hit{fill:transparent;cursor:default}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink-2);margin:0 0 8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.legend i.ln{height:2px;width:14px;border-radius:1px}
+#tip{position:fixed;z-index:50;pointer-events:none;background:var(--ink);color:var(--bg);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.4;max-width:280px;box-shadow:var(--shadow);opacity:0;transition:opacity .08s}
+#tip b{font-weight:700}
+#tip .row{display:flex;gap:10px;justify-content:space-between}
+#tip .row span:last-child{font-variant-numeric:tabular-nums;font-weight:600}
+.funnel{display:flex;flex-direction:column;gap:10px}
+.fstep{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center}
+.fstep .fl{font-size:12.5px;color:var(--ink-2);font-weight:550}
+.fstep .fb{position:relative;height:30px;background:var(--line-2);border-radius:6px;overflow:hidden}
+.fstep .fb i{position:absolute;inset:0 auto 0 0;background:var(--s1);border-radius:0 6px 6px 0}
+.fstep .fb b{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;color:var(--ink);mix-blend-mode:normal}
+.fstep .conv{grid-column:2;font-size:11.5px;color:var(--ink-3);margin-top:-6px}
+.note{font-size:12px;color:var(--ink-3);margin-top:10px}
+.empty{padding:20px;text-align:center;color:var(--ink-3);font-size:13px}
+.seg{display:inline-flex;background:var(--line-2);border-radius:8px;padding:2px;gap:2px}
+.seg button{appearance:none;border:0;background:none;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;color:var(--ink-2);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+.cardhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.health-list{display:flex;flex-direction:column}
+.health-list div{display:grid;grid-template-columns:1fr auto;gap:12px;padding:10px 0;border-bottom:1px solid var(--line-2);align-items:center}
+.health-list div:last-child{border-bottom:0}
+.health-list p{margin:2px 0 0;font-size:12.5px;color:var(--ink-3)}
+dl.gloss{display:grid;grid-template-columns:minmax(160px,240px) 1fr;gap:0;margin:0}
+dl.gloss dt{font-weight:650;padding:10px 12px 10px 0;border-bottom:1px solid var(--line-2)}
+dl.gloss dd{margin:0;padding:10px 0;border-bottom:1px solid var(--line-2);color:var(--ink-2)}
+dl.gloss code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:var(--line-2);padding:1px 5px;border-radius:4px;color:var(--ink)}
+footer{max-width:1320px;margin:0 auto;padding:0 20px 32px;color:var(--ink-3);font-size:12px}
+@media (max-width:640px){
+  .top-in{padding:10px 16px 0}
+  .filters,main,footer{padding-left:16px;padding-right:16px}
+  .brandrow .sub{margin-left:0;text-align:left;width:100%}
+  .kpi .val{font-size:22px}
+  .g-kpi{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .kpi{padding:12px}
+  .fstep{grid-template-columns:90px 1fr}
+  dl.gloss{grid-template-columns:1fr}
+  dl.gloss dt{border-bottom:0;padding-bottom:0}
+  .range-label{margin-left:0;width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brandrow">
+      <svg class="mark" viewBox="0 0 30 34" aria-hidden="true">
+        <path d="M15 1 29 9v16l-14 8L1 25V9z" fill="none" stroke="#FFFFFF" stroke-width="2.2"/>
+        <path d="M15 9.5 21.8 13.4v7.8L15 25.1l-6.8-3.9v-7.8z" fill="none" stroke="#D8B389" stroke-width="2.2"/>
+        <circle cx="15" cy="17.3" r="2.6" fill="#FFFFFF"/>
+      </svg>
+      <div class="word"><b>IMKAT</b><span>HOMES</span></div>
+      <div class="sub">Growth dashboard · GoHighLevel data as of <strong id="asof">—</strong></div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Dashboard pages" id="tabs"></nav>
+  </div>
+</header>
+
+<section class="filters" aria-label="Filters">
+  <div class="chips" id="presets" role="group" aria-label="Date range"></div>
+  <div id="custom" hidden style="display:flex;gap:8px">
+    <label class="sel">From <input type="date" id="dFrom"></label>
+    <label class="sel">To <input type="date" id="dTo"></label>
+  </div>
+  <label class="sel">Source <select id="fCh"></select></label>
+  <label class="sel">Rep <select id="fRep"></select></label>
+  <label class="sel">Region <select id="fRg"></select></label>
+  <div class="range-label" id="rangeLabel"></div>
+</section>
+
+<main id="main"><div class="empty">Loading dashboard data…</div></main>
+<footer id="foot"></footer>
+<div id="tip" role="tooltip"></div>
+
+<script>
+(() => {
+"use strict";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------------- formatting */
+const fmtN = v => v == null || !isFinite(v) ? "—" : Math.round(v).toLocaleString("en-US");
+const fmtP = v => v == null || !isFinite(v) ? "—" : (v * 100).toFixed(1) + "%";
+const fmt$ = v => {
+  if (v == null || !isFinite(v)) return "—";
+  const a = Math.abs(v);
+  if (a >= 1e6) return "$" + (v / 1e6).toFixed(a >= 1e7 ? 1 : 2) + "M";
+  if (a >= 1e4) return "$" + Math.round(v / 1e3) + "K";
+  if (a >= 1e3) return "$" + (v / 1e3).toFixed(1) + "K";
+  return "$" + Math.round(v).toLocaleString("en-US");
+};
+const fmt$full = v => v == null || !isFinite(v) ? "—" : "$" + Math.round(v).toLocaleString("en-US");
+const fmtMin = m => m == null ? "—" : m < 60 ? Math.round(m) + " min" : m < 1440 ? (m / 60).toFixed(1) + " hrs" : (m / 1440).toFixed(1) + " days";
+const div = (a, b) => b ? a / b : null;
+const LOWN = 10;
+
+/* ---------------- dates */
+const D = s => new Date(s + "T12:00:00");
+const iso = d => d.toISOString().slice(0, 10);
+const addDays = (s, n) => { const d = D(s); d.setDate(d.getDate() + n); return iso(d); };
+const daysBetween = (a, b) => Math.round((D(b) - D(a)) / 864e5) + 1;
+const niceDate = s => D(s).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+const monLabel = m => new Date(m + "-15T12:00:00").toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+
+/* ---------------- constants */
+const PAGES = [
+  ["overview", "Executive summary"], ["sources", "Marketing sources"], ["sales", "Sales team"],
+  ["speed", "Speed to lead"], ["pipeline", "Pipeline"], ["markets", "Markets & product"],
+  ["health", "Data health"], ["glossary", "Glossary"]];
+const REP_COLOR = { David: "var(--s1)", Avenir: "var(--s2)", Eugene: "var(--s3)", James: "var(--s4)" };
+const RG_COLOR = { "Sacramento": "var(--s1)", "Bay Area": "var(--s2)", "Outside core markets": "var(--neutral)", "Unknown": "var(--neutral)" };
+const CH_ORDER = ["Meta Ads", "Google Ads", "Organic / SEO", "Google Business Profile", "Organic Social", "Events",
+  "Website (no source)", "YouTube Ads", "Nextdoor", "Referral", "Phone (inbound)", "TV", "5K Promo (channel unknown)", "Offline / Other", "Other", "Unattributed"];
+const PAID = new Set(["Meta Ads", "Google Ads"]);
+const GROUP_LABEL = { ready: "Ready to sign", pre: "Before estimate", hold: "On hold / timing", unq: "Unqualified" };
+const GROUP_COLOR = { ready: "var(--s1)", pre: "var(--s2)", hold: "var(--neutral)" };
+const SPEED_BUCKETS = [["<5 min", 0, 5], ["5–15 min", 5, 15], ["15–60 min", 15, 60], ["1–24 hrs", 60, 1440], ["24+ hrs", 1440, Infinity]];
+
+const state = { page: "overview", preset: "ytd", from: null, to: null, ch: "", rep: "", rg: "", closeBasis: "period" };
+try { const s = JSON.parse(localStorage.getItem("imkat-dash") || "{}"); Object.assign(state, s.preset ? { preset: s.preset, ch: s.ch || "", rep: s.rep || "", rg: s.rg || "", closeBasis: s.closeBasis || "period", from: s.from, to: s.to } : {}); } catch (e) {}
+const tokenPage = (location.hash || "").slice(1);
+if (PAGES.some(p => p[0] === tokenPage)) state.page = tokenPage;
+const save = () => { try { localStorage.setItem("imkat-dash", JSON.stringify({ preset: state.preset, ch: state.ch, rep: state.rep, rg: state.rg, closeBasis: state.closeBasis, from: state.from, to: state.to })); } catch (e) {} };
+
+let DATA = null;
+
+/* ---------------- tooltip */
+const tip = $("#tip");
+function showTip(html, x, y) {
+  tip.innerHTML = html; tip.style.opacity = 1;
+  const r = tip.getBoundingClientRect();
+  let left = x + 14, top = y + 14;
+  if (left + r.width > innerWidth - 8) left = x - r.width - 14;
+  if (top + r.height > innerHeight - 8) top = y - r.height - 14;
+  tip.style.left = Math.max(8, left) + "px"; tip.style.top = Math.max(8, top) + "px";
+}
+const hideTip = () => { tip.style.opacity = 0; };
+document.addEventListener("mousemove", e => {
+  const t = e.target.closest("[data-tip]");
+  if (t) showTip(t.getAttribute("data-tip"), e.clientX, e.clientY); else if (!e.target.closest("[data-xhair]")) hideTip();
+});
+document.addEventListener("focusin", e => {
+  const t = e.target.closest("[data-tip]");
+  if (t) { const r = t.getBoundingClientRect(); showTip(t.getAttribute("data-tip"), r.right, r.bottom); }
+});
+document.addEventListener("focusout", hideTip);
+const tipRows = (title, rows) => `<b>${esc(title)}</b>` + rows.map(([k, v]) => `<div class="row"><span>${esc(k)}</span><span>${esc(v)}</span></div>`).join("");
+
+/* ---------------- range */
+function range() {
+  const today = DATA.today, y = today.slice(0, 4), m = today.slice(0, 7);
+  const q = Math.floor((+today.slice(5, 7) - 1) / 3) * 3 + 1;
+  const P = {
+    "7d": [addDays(today, -6), today], "30d": [addDays(today, -29), today], "90d": [addDays(today, -89), today],
+    mtd: [m + "-01", today], qtd: [`${y}-${String(q).padStart(2, "0")}-01`, today], ytd: [y + "-01-01", today],
+    spend: ["2026-01-01", "2026-07-31"], "2025": ["2025-01-01", "2025-12-31"], all: ["2024-03-01", today],
+    custom: [state.from || y + "-01-01", state.to || today]
+  };
+  const [from, to] = P[state.preset] || P.ytd;
+  const len = daysBetween(from, to);
+  return { from, to, pFrom: addDays(from, -len), pTo: addDays(from, -1), len };
+}
+const PRESETS = [["7d", "7D"], ["30d", "30D"], ["90d", "90D"], ["mtd", "MTD"], ["qtd", "QTD"], ["ytd", "YTD"], ["spend", "Jan–Jul '26"], ["2025", "2025"], ["all", "All"], ["custom", "Custom"]];
+
+/* ---------------- filtering + metrics */
+const inR = (d, a, b) => d && d >= a && d <= b;
+function dimsOK(r, opts = {}) {
+  if (state.ch && r.ch !== state.ch) return false;
+  if (state.rg && r.rg !== state.rg) return false;
+  if (!opts.noRep && state.rep && r.rep !== state.rep) return false;
+  return true;
+}
+function slice(a, b) {
+  const today = DATA.today;
+  const leads = DATA.leads.filter(r => inR(r.d, a, b) && dimsOK(r, { noRep: true }));
+  const appts = DATA.appts.filter(r => inR(r.d, a, b) && r.d <= today && dimsOK(r));
+  const closed = DATA.closed.filter(r => inR(r.d, a, b) && dimsOK(r));
+  return { leads, qleads: leads.filter(r => r.q), appts, won: closed.filter(r => r.s === "won"), lost: closed.filter(r => r.s === "lost") };
+}
+function spendFor(a, b, byKey) {
+  // Monthly spend prorated by day; only defined when the whole range sits inside the covered months.
+  if (a < "2026-01-01" || b > DATA.spend_through) return null;
+  let tot = 0; const by = {};
+  for (const s of DATA.spend) {
+    if (state.ch && s.ch !== state.ch) continue;
+    if (state.rg && s.rg !== state.rg) continue;
+    const ms = s.m + "-01", dim = new Date(+s.m.slice(0, 4), +s.m.slice(5, 7), 0).getDate(), me = s.m + "-" + String(dim).padStart(2, "0");
+    const lo = a > ms ? a : ms, hi = b < me ? b : me;
+    if (lo > hi) continue;
+    const v = s.v * daysBetween(lo, hi) / dim;
+    tot += v; if (byKey) by[s[byKey]] = (by[s[byKey]] || 0) + v;
+  }
+  return byKey ? by : tot;
+}
+function metrics(a, b) {
+  const s = slice(a, b);
+  const rev = s.won.reduce((t, r) => t + r.v, 0);
+  const valued = s.won.filter(r => r.v > 0);
+  const cohortW = s.appts.filter(r => r.w).length;
+  const paidLeads = s.qleads.filter(r => PAID.has(r.ch)).length;
+  const paidRev = s.won.filter(r => PAID.has(r.ch)).reduce((t, r) => t + r.v, 0);
+  const paidAppts = s.appts.filter(r => PAID.has(r.ch)).length;
+  const paidWon = s.won.filter(r => PAID.has(r.ch)).length;
+  const spend = state.rep ? null : spendFor(a, b);
+  const cyc = s.won.map(r => r.cyc).filter(v => v != null && v >= 0).sort((x, y) => x - y);
+  return {
+    ...s, rev, nLeads: s.leads.length, nQ: s.qleads.length, nAppts: s.appts.length, nWon: s.won.length, nLost: s.lost.length,
+    close: div(s.won.length, s.appts.length), cohort: div(cohortW, s.appts.length), cohortW,
+    win: div(s.won.length, s.won.length + s.lost.length), avg: div(valued.reduce((t, r) => t + r.v, 0), valued.length), nValued: valued.length,
+    l2a: div(s.appts.length, s.qleads.length), spend, paidLeads, paidRev, paidAppts, paidWon,
+    cpl: spend != null ? div(spend, paidLeads) : null, cpa: spend != null ? div(spend, paidAppts) : null,
+    cpw: spend != null ? div(spend, paidWon) : null, roas: spend != null ? div(paidRev, spend) : null,
+    cycMed: cyc.length ? cyc[Math.floor(cyc.length / 2)] : null
+  };
+}
+function openDeals() { return DATA.open.filter(r => dimsOK(r)); }
+
+/* ---------------- bits */
+const I = {
+  warn: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 15 14H1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 6v3.6M8 11.4v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  up: '<svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1 9 7H1z" fill="currentColor"/></svg>',
+  down: '<svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9 1 3h8z" fill="currentColor"/></svg>',
+  good: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8.5 3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  bad: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v6.5M8 12.5v.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  do: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+const info = t => `<button class="info" type="button" aria-label="How this is calculated" data-tip="${esc(t)}">i</button>`;
+const low = (n, min = LOWN) => n < min ? `<span class="low" data-tip="${esc(`Based on ${n} record${n === 1 ? "" : "s"} — fewer than ${min}, so treat as low confidence.`)}">${I.warn} low n</span>` : "";
+function delta(cur, prev, { goodUp = true, pct = false } = {}) {
+  if (cur == null || prev == null || !isFinite(cur) || !isFinite(prev)) return `<span class="delta flat">no prior data</span>`;
+  let d, txt;
+  if (pct) { d = cur - prev; txt = (d >= 0 ? "+" : "") + (d * 100).toFixed(1) + " pts"; }
+  else { if (prev === 0) return `<span class="delta flat">new vs 0</span>`; d = (cur - prev) / Math.abs(prev); txt = (d >= 0 ? "+" : "") + (d * 100).toFixed(1) + "%"; }
+  if (Math.abs(d) < 0.0005) return `<span class="delta flat">± 0</span>`;
+  const good = (d > 0) === goodUp;
+  return `<span class="delta ${good ? "good" : "bad"}">${d > 0 ? I.up : I.down}${txt}</span>`;
+}
+function kpi({ label, value, prev, fmt, tipText, goodUp = true, pct = false, n = null, na = null, hero = false, sub = "" }) {
+  const v = value == null || !isFinite(value) ? null : value;
+  return `<div class="kpi${hero ? " hero" : ""}">
+    <div class="lab">${esc(label)} ${info(tipText)}</div>
+    <div class="val${v == null ? " na" : ""}">${v == null ? esc(na || "—") : fmt(v)}</div>
+    <div class="foot">${v == null ? "" : delta(v, prev, { goodUp, pct })} ${n != null ? low(n) : ""} ${sub}</div>
+  </div>`;
+}
+
+/* ---------------- charts (hand-built SVG) */
+function niceTicks(max, count = 4) {
+  if (!(max > 0)) return [0, 1];
+  const raw = max / count, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map(x => x * mag).find(x => x >= raw);
+  const t = []; for (let v = 0; v <= max + step * 0.001 || t.length < 2; v += step) t.push(+v.toFixed(10));
+  if (t[t.length - 1] < max) t.push(t[t.length - 1] + step);
+  return t;
+}
+function hbars(rows, { fmt = fmtN, color = "var(--s1)", labelW = 150, tipFn } = {}) {
+  if (!rows.length) return `<div class="empty">No records for this filter.</div>`;
+  const W = 560, rowH = 30, barH = 16, padR = 70, H = rows.length * rowH + 4;
+  const max = Math.max(...rows.map(r => r.value), 0) || 1;
+  const x = v => (W - labelW - padR) * v / max;
+  const out = rows.map((r, i) => {
+    const y = i * rowH + 4, w = Math.max(r.value > 0 ? 2 : 0, x(r.value));
+    const c = r.color || color, t = tipFn ? tipFn(r) : tipRows(r.label, [["Value", fmt(r.value)]]);
+    const path = w > 0 ? `M${labelW},${y + (rowH - barH) / 2} h${Math.max(0, w - 4)} a4,4 0 0 1 4,4 v${barH - 8} a4,4 0 0 1 -4,4 h${-Math.max(0, w - 4)} z` : "";
+    return `<g data-tip="${esc(t)}"><rect class="hit" x="0" y="${y}" width="${W}" height="${rowH}"/>
+      <text class="lbl" x="${labelW - 10}" y="${y + rowH / 2 + 4}" text-anchor="end">${esc(r.label.length > 22 ? r.label.slice(0, 21) + "…" : r.label)}</text>
+      ${path ? `<path d="${path}" fill="${c}"/>` : ""}
+      <text class="v" x="${labelW + w + 6}" y="${y + rowH / 2 + 4}">${esc(r.display ?? fmt(r.value))}</text></g>`;
+  }).join("");
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img">${out}</svg></div>`;
+}
+function columns(cats, series, { fmt = fmtN, stacked = false, H = 220 } = {}) {
+  // cats: [label]; series: [{name,color,values:[]}]
+  if (!cats.length) return `<div class="empty">No records for this filter.</div>`;
+  const W = 620, padL = 52, padB = 26, padT = 12, padR = 8;
+  const totals = cats.map((_, i) => stacked ? series.reduce((t, s) => t + (s.values[i] || 0), 0) : Math.max(...series.map(s => s.values[i] || 0)));
+  const ticks = niceTicks(Math.max(...totals, 0)), top = ticks[ticks.length - 1] || 1;
+  const ih = H - padB - padT, iw = W - padL - padR, band = iw / cats.length;
+  const y = v => padT + ih - ih * v / top;
+  const groups = stacked ? 1 : series.length;
+  const bw = Math.min(24, (band * 0.7) / groups);
+  let g = `<g class="grid">${ticks.map(t => `<line x1="${padL}" x2="${W - padR}" y1="${y(t)}" y2="${y(t)}"/>`).join("")}</g>`;
+  g += ticks.map(t => `<text x="${padL - 8}" y="${y(t) + 4}" text-anchor="end">${esc(fmt(t))}</text>`).join("");
+  const every = Math.ceil(cats.length / 12);
+  cats.forEach((c, i) => {
+    const cx = padL + band * i + band / 2;
+    if (i % every === 0) g += `<text x="${cx}" y="${H - 8}" text-anchor="middle">${esc(c)}</text>`;
+    let acc = 0;
+    const rows = series.map(s => [s.name, fmt(s.values[i] || 0)]);
+    series.forEach((s, j) => {
+      const v = s.values[i] || 0; if (v <= 0) { return; }
+      let x0, y0, y1;
+      if (stacked) { x0 = cx - bw / 2; y0 = y(acc + v); y1 = y(acc); acc += v; }
+      else { x0 = cx - (bw * groups) / 2 + j * bw + (groups > 1 ? 1 : 0); y0 = y(v); y1 = y(0); }
+      const h = Math.max(1, y1 - y0 - (stacked && acc - v > 0 ? 2 : 0)), w = groups > 1 && !stacked ? bw - 2 : bw;
+      const isTop = !stacked || j === series.map((ss, k) => (ss.values[i] || 0) > 0 ? k : -1).filter(k => k >= 0).pop();
+      const r = Math.min(4, h, w / 2);
+      const d = isTop ? `M${x0},${y0 + h} v${-(h - r)} a${r},${r} 0 0 1 ${r},${-r} h${w - 2 * r} a${r},${r} 0 0 1 ${r},${r} v${h - r} z` : `M${x0},${y0} h${w} v${h} h${-w} z`;
+      g += `<path d="${d}" fill="${s.color}"/>`;
+    });
+    g += `<rect class="hit" x="${padL + band * i}" y="${padT}" width="${band}" height="${ih}" data-tip="${esc(tipRows(c, stacked && series.length > 1 ? [...rows, ["Total", fmt(totals[i])]] : rows))}"/>`;
+  });
+  g += `<line class="axis" x1="${padL}" x2="${W - padR}" y1="${y(0)}" y2="${y(0)}"/>`;
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg></div>`;
+}
+function lines(cats, series, { fmt = fmtN, H = 220, pctAxis = false } = {}) {
+  if (!cats.length) return `<div class="empty">No records for this filter.</div>`;
+  const W = 620, padL = 52, padB = 26, padT = 14, padR = 16;
+  const all = series.flatMap(s => s.values.filter(v => v != null));
+  const ticks = niceTicks(Math.max(...all, pctAxis ? 0.1 : 1)), top = ticks[ticks.length - 1] || 1;
+  const ih = H - padB - padT, iw = W - padL - padR;
+  const x = i => padL + (cats.length === 1 ? iw / 2 : iw * i / (cats.length - 1));
+  const y = v => padT + ih - ih * v / top;
+  let g = `<g class="grid">${ticks.map(t => `<line x1="${padL}" x2="${W - padR}" y1="${y(t)}" y2="${y(t)}"/>`).join("")}</g>`;
+  g += ticks.map(t => `<text x="${padL - 8}" y="${y(t) + 4}" text-anchor="end">${esc(fmt(t))}</text>`).join("");
+  const every = Math.ceil(cats.length / 10);
+  cats.forEach((c, i) => { if (i % every === 0 || i === cats.length - 1) g += `<text x="${x(i)}" y="${H - 8}" text-anchor="middle">${esc(c)}</text>`; });
+  series.forEach(s => {
+    const pts = s.values.map((v, i) => v == null ? null : [x(i), y(v)]);
+    let d = "", on = false;
+    pts.forEach(p => { if (!p) { on = false; return; } d += (on ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1); on = true; });
+    if (series.length === 1 && s.area !== false) {
+      const valid = pts.filter(Boolean);
+      if (valid.length > 1) g += `<path d="M${valid[0][0]},${y(0)} ${valid.map(p => "L" + p[0] + "," + p[1]).join(" ")} L${valid[valid.length - 1][0]},${y(0)} z" fill="${s.color}" opacity=".1"/>`;
+    }
+    g += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    const last = pts.map((p, i) => [p, i]).filter(([p]) => p).pop();
+    if (last) g += `<circle cx="${last[0][0]}" cy="${last[0][1]}" r="4.5" fill="${s.color}" stroke="var(--panel)" stroke-width="2"/>`;
+  });
+  g += `<line class="axis" x1="${padL}" x2="${W - padR}" y1="${y(0)}" y2="${y(0)}"/>`;
+  // crosshair hit strips
+  const band = iw / Math.max(1, cats.length - 1);
+  cats.forEach((c, i) => {
+    const rows = series.map(s => [s.name, s.values[i] == null ? "—" : fmt(s.values[i])]);
+    g += `<rect class="hit" data-xhair="1" x="${x(i) - band / 2}" y="${padT}" width="${band}" height="${ih}" data-tip="${esc(tipRows(c, rows))}"/>`;
+  });
+  return `<div class="chart xh"><svg viewBox="0 0 ${W} ${H}" role="img">${g}<line class="xline" x1="0" x2="0" y1="${padT}" y2="${padT + ih}" stroke="var(--ink-3)" stroke-width="1" opacity="0"/></svg></div>`;
+}
+function stackedH(rows, keys, { fmt = fmt$, labelW = 90 } = {}) {
+  // rows: [{label, seg:{key:value}}]
+  if (!rows.length) return `<div class="empty">No records for this filter.</div>`;
+  const W = 560, rowH = 34, barH = 18, padR = 70, H = rows.length * rowH + 4;
+  const max = Math.max(...rows.map(r => keys.reduce((t, k) => t + (r.seg[k] || 0), 0)), 1);
+  const sx = v => (W - labelW - padR) * v / max;
+  const out = rows.map((r, i) => {
+    const y = i * rowH + 4 + (rowH - barH) / 2; let acc = labelW; const tot = keys.reduce((t, k) => t + (r.seg[k] || 0), 0);
+    const present = keys.filter(k => (r.seg[k] || 0) > 0);
+    const segs = present.map((k, j) => {
+      const w = sx(r.seg[k]); const isLast = j === present.length - 1; const ww = Math.max(1, w - (isLast ? 0 : 2));
+      const d = isLast && ww > 4 ? `M${acc},${y} h${ww - 4} a4,4 0 0 1 4,4 v${barH - 8} a4,4 0 0 1 -4,4 h${-(ww - 4)} z` : `M${acc},${y} h${ww} v${barH} h${-ww} z`;
+      acc += w; return `<path d="${d}" fill="${GROUP_COLOR[k]}"/>`;
+    }).join("");
+    const t = tipRows(r.label, [...keys.map(k => [GROUP_LABEL[k], fmt(r.seg[k] || 0)]), ["Total", fmt(tot)]]);
+    return `<g data-tip="${esc(t)}"><rect class="hit" x="0" y="${i * rowH}" width="${W}" height="${rowH}"/>
+      <text class="lbl" x="${labelW - 10}" y="${y + barH / 2 + 4}" text-anchor="end">${esc(r.label)}</text>${segs}
+      <text class="v" x="${acc + 6}" y="${y + barH / 2 + 4}">${fmt(tot)}</text></g>`;
+  }).join("");
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img">${out}</svg></div>`;
+}
+const legend = items => `<div class="legend">${items.map(([n, c, ln]) => `<span><i class="${ln ? "ln" : ""}" style="background:${c}"></i>${esc(n)}</span>`).join("")}</div>`;
+
+/* ---------------- time buckets */
+function buckets(a, b) {
+  const len = daysBetween(a, b), out = [];
+  if (len <= 120) {
+    let s = a;
+    while (s <= b) { const e = addDays(s, 6) < b ? addDays(s, 6) : b; out.push({ a: s, b: e, label: D(s).toLocaleDateString("en-US", { month: "short", day: "numeric" }) }); s = addDays(e, 1); }
+  } else {
+    let m = a.slice(0, 7);
+    while (m + "-01" <= b) {
+      const [yy, mm] = m.split("-").map(Number); const last = new Date(yy, mm, 0).getDate();
+      out.push({ a: (m + "-01" < a ? a : m + "-01"), b: (m + "-" + last < b ? m + "-" + last : b), label: monLabel(m), m });
+      m = mm === 12 ? `${yy + 1}-01` : `${yy}-${String(mm + 1).padStart(2, "0")}`;
+    }
+  }
+  return out;
+}
+const countIn = (arr, bk, f = () => 1) => bk.map(k => arr.filter(r => r.d >= k.a && r.d <= k.b).reduce((t, r) => t + f(r), 0));
+
+/* ---------------- pages */
+function bannerIfOld(R) {
+  const bulk = DATA.health.bulk_days.filter(x => x.d >= R.from && x.d <= R.to);
+  const msgs = [];
+  if (R.from < "2026-01-01") msgs.push(`Won/lost dates before 2026 include bulk CRM clean-ups${bulk.length ? ` (${bulk.map(x => `${x.won} wins on ${niceDate(x.d)}`).join(", ")})` : ""}, so wins and losses in this range don't reflect real signing dates. 2026 data is clean.`);
+  const pBulk = DATA.health.bulk_days.filter(x => x.d >= R.pFrom && x.d <= R.pTo);
+  if (R.from >= "2026-01-01" && pBulk.length) msgs.push(`The comparison period (${niceDate(R.pFrom)} – ${niceDate(R.pTo)}) includes bulk CRM clean-ups (${pBulk.map(x => `${x.won} wins on ${niceDate(x.d)}`).join(", ")}), so % changes for wins, losses and revenue are overstated. Compare against a 2026 period for a clean read.`);
+  if (state.rep) msgs.push(`Leads aren't assigned to closers, so lead counts and cost-per metrics show all reps. Appointments, wins and pipeline are filtered to ${state.rep}.`);
+  return msgs.map(m => `<div class="banner">${I.warn}<div>${esc(m)}</div></div>`).join("");
+}
+function spendNote(m) {
+  if (state.rep) return "Spend isn't split by rep";
+  if (m.spend == null) return "Spend covers Jan 1–Jul 31, 2026 only — pick “Jan–Jul '26”";
+  return "";
+}
+
+function pageOverview(R) {
+  const m = metrics(R.from, R.to), p = metrics(R.pFrom, R.pTo), op = openDeals();
+  const ready = op.filter(r => r.g === "ready"), readyV = ready.reduce((t, r) => t + r.v, 0);
+  const tiles = [
+    kpi({ label: "Revenue won", value: m.rev, prev: p.rev, fmt: fmt$, hero: true, n: m.nWon, tipText: "Sum of contract value (GHL monetary value) on Sales Pipeline deals marked Won, by won date." }),
+    kpi({ label: "Jobs won", value: m.nWon, prev: p.nWon, fmt: fmtN, n: m.nWon, tipText: "Sales Pipeline deals with status Won, counted by won date. One deal = one job (multi-unit clients count once per deal)." }),
+    kpi({ label: "Appointments", value: m.nAppts, prev: p.nAppts, fmt: fmtN, tipText: "Walkthrough bookings for David, James, Eugene and Avenir by appointment date, excluding cancelled/invalid. Upcoming appointments aren't counted until the date passes." }),
+    kpi({ label: "Qualified leads", value: m.nQ, prev: p.nQ, fmt: fmtN, sub: `<span>${fmtN(m.nLeads)} total</span>`, tipText: "New contacts entering the Lead or Sales Pipeline (or booking a walkthrough) in the period, excluding Fake/Spam, Outside Service and No Property." }),
+    kpi({ label: "Close rate", value: state.closeBasis === "cohort" ? m.cohort : m.close, prev: state.closeBasis === "cohort" ? p.cohort : p.close, fmt: fmtP, pct: true, n: m.nAppts, tipText: "Jobs won ÷ appointments in the same period. Switch to the appointment-cohort view on the Sales team page." }),
+    kpi({ label: "Win rate", value: m.win, prev: p.win, fmt: fmtP, pct: true, n: m.nWon + m.nLost, tipText: "Won ÷ (won + lost) for deals closed in the period." }),
+    kpi({ label: "Average deal", value: m.avg, prev: p.avg, fmt: fmt$, n: m.nValued, tipText: "Revenue won ÷ jobs won, excluding won deals with a $0 value." }),
+    kpi({ label: "Ready to sign", value: readyV, prev: null, fmt: fmt$, sub: `<span>${fmtN(ready.length)} open deals · today</span>`, tipText: "Open Sales Pipeline deals in estimate-delivered stages (Estimate Ready, Proposal Sent, Contact Made/Pending, Review w/ Decision Makers, Looking at Bids, Financing, Review price, Last Chance, New Inside). A snapshot of today, not date-filtered." }),
+    kpi({ label: "Paid ad spend", value: m.spend, prev: p.spend, fmt: fmt$, goodUp: false, na: spendNote(m) ? "Not available" : "—", sub: spendNote(m) ? `<span>${esc(spendNote(m))}</span>` : `<span>Meta + Google, manual sheet</span>`, tipText: "Meta + Google Ads spend from the IMKAT ADs Report sheet (monthly actuals, prorated by day). Will switch to the ad platform APIs once connected." }),
+    kpi({ label: "Cost per lead (paid)", value: m.cpl, prev: p.cpl, fmt: fmt$, goodUp: false, n: m.paidLeads, na: "Not available", tipText: "Meta + Google spend ÷ qualified leads whose original source is Meta or Google." }),
+    kpi({ label: "Cost per appointment (paid)", value: m.cpa, prev: p.cpa, fmt: fmt$, goodUp: false, n: m.paidAppts, na: "Not available", tipText: "Meta + Google spend ÷ appointments from Meta- or Google-sourced leads." }),
+    kpi({ label: "ROAS (paid)", value: m.roas, prev: p.roas, fmt: v => v.toFixed(1) + "×", n: m.paidWon, na: "Not available", tipText: "Revenue won from Meta- or Google-sourced deals ÷ Meta + Google spend, same period (activity view — deals often close 1–5 months after the click)." })
+  ];
+  const bk = buckets(R.from, R.to);
+  const revB = countIn(m.won, bk, r => r.v);
+  const spendB = bk.map(k => state.rep ? null : spendFor(k.a, k.b));
+  const hasSpend = spendB.some(v => v != null && v > 0);
+  const series = [{ name: "Revenue won", color: "var(--s1)", values: revB }];
+  if (hasSpend) series.push({ name: "Paid ad spend", color: "var(--s2)", values: spendB.map(v => v ?? 0) });
+  const trend = `<div class="card"><h3>${hasSpend ? "Is revenue won outpacing ad spend?" : "How much revenue are we signing?"}</h3>
+    <p class="hint">Revenue won by ${bk.length && bk[0].m ? "month" : "week"}${hasSpend ? " vs Meta + Google spend (manual sheet, through Jul 31 2026)" : ""}.</p>
+    ${hasSpend ? legend(series.map(s => [s.name, s.color])) : ""}${columns(bk.map(k => k.label), series, { fmt: fmt$ })}</div>`;
+  const small = `<div class="card"><h3>Are leads turning into appointments and jobs?</h3><p class="hint">Weekly or monthly counts — each on its own scale.</p>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:10px">
+      ${[["Qualified leads", countIn(m.qleads, bk), "var(--s1)"], ["Appointments", countIn(m.appts, bk), "var(--s2)"], ["Jobs won", countIn(m.won, bk), "var(--s3)"]].map(([n, v, c]) =>
+        `<div><div class="muted" style="font-size:12px;font-weight:600">${n}</div>${lines(bk.map(k => k.label), [{ name: n, color: c, values: v }], { H: 150 })}</div>`).join("")}
+    </div></div>`;
+  const f = [["Qualified leads", m.nQ], ["Appointments", m.nAppts], ["Jobs won", m.nWon]];
+  const fmax = Math.max(...f.map(x => x[1]), 1);
+  const funnel = `<div class="card"><h3>Where do leads drop off?</h3><p class="hint">Same period counts (activity view). ${state.rep ? "Leads are all reps." : ""}</p>
+    <div class="funnel">${f.map(([n, v], i) => `<div class="fstep"><div class="fl">${n}</div><div class="fb" data-tip="${esc(tipRows(n, [["Count", fmtN(v)]]))}"><i style="width:${Math.max(2, 100 * v / fmax)}%"></i><b>${fmtN(v)}</b></div>
+      ${i ? `<div class="conv">${fmtP(div(v, f[i - 1][1]))} of ${f[i - 1][0].toLowerCase()} · ${fmtP(1 - (div(v, f[i - 1][1]) ?? 0))} drop-off</div>` : ""}</div>`).join("")}</div>
+    <p class="note">Lead → appointment ${fmtP(m.l2a)} · appointment → won ${fmtP(m.close)} · lead → won ${fmtP(div(m.nWon, m.nQ))}</p></div>`;
+  return bannerIfOld(R) + `<div class="insights">${insights(m, op)}</div>
+    <div class="grid g-kpi">${tiles.join("")}</div>
+    <div class="grid g-2">${trend}${funnel}</div>${small}`;
+}
+
+function insights(m, op) {
+  const out = [];
+  const byCh = groupBy(m.appts, "ch"); const wonCh = groupBy(m.won, "ch");
+  const chStats = Object.keys(byCh).filter(k => k !== "Unattributed" && byCh[k].length >= 15).map(k => ({ k, appts: byCh[k].length, won: (wonCh[k] || []).length, rate: (wonCh[k] || []).length / byCh[k].length }));
+  chStats.sort((a, b) => b.rate - a.rate);
+  const byRep = groupBy(m.appts, "rep"), wonRep = groupBy(m.won, "rep");
+  const repStats = DATA.reps.filter(r => (byRep[r] || []).length >= 20).map(r => ({ r, appts: byRep[r].length, won: (wonRep[r] || []).length, rate: (wonRep[r] || []).length / byRep[r].length }));
+  repStats.sort((a, b) => a.rate - b.rate);
+  if (chStats.length) {
+    const b = chStats[0];
+    out.push(["good", "What's working", `${b.k} closes ${fmtP(b.rate)} of its appointments (${b.won} of ${b.appts}) — the best of any source with 15+ appointments${m.close ? `, vs ${fmtP(m.close)} overall` : ""}.`]);
+  } else out.push(["good", "What's working", `Not enough appointments per source in this range to compare close rates. Widen the date range.`]);
+  const leadCh = groupBy(m.qleads, "ch");
+  const bigLow = Object.keys(leadCh).filter(k => leadCh[k].length >= 50 && k !== "Unattributed").map(k => ({ k, n: leadCh[k].length, a: (byCh[k] || []).length })).map(x => ({ ...x, r: x.a / x.n })).sort((a, b) => a.r - b.r)[0];
+  if (repStats.length >= 2 && repStats[0].rate < (m.close || 0) * 0.7) {
+    const w = repStats[0];
+    out.push(["bad", "What's not", `${w.r} closes ${fmtP(w.rate)} of appointments (${w.won} of ${w.appts}) vs ${fmtP(m.close)} for the team. Same lead flow, far fewer signed jobs — review the walkthrough-to-estimate process together.`]);
+  } else if (bigLow) {
+    out.push(["bad", "What's not", `${bigLow.k} brings ${fmtN(bigLow.n)} leads but only ${fmtP(bigLow.r)} book a walkthrough. Tighten targeting or qualify harder on the form.`]);
+  } else out.push(["bad", "What's not", `${fmtP(div(m.won.filter(r => r.ch === "Unattributed").length, m.nWon))} of jobs won have no source in GHL, so their marketing can't get credit.`]);
+  const stale = op.filter(r => r.g === "ready" && r.age > 30), staleV = stale.reduce((t, r) => t + r.v, 0);
+  const unatt = m.won.filter(r => r.ch === "Unattributed").length;
+  if (stale.length) out.push(["do", "What to do", `Follow up on ${fmtN(stale.length)} ready-to-sign deals worth ${fmt$(staleV)} that haven't moved in 30+ days. At the current ${fmtP(m.win)} win rate that's about ${fmt$(staleV * (m.win || 0))} of signable revenue.`]);
+  else out.push(["do", "What to do", `Make "source" required on every GHL form and Meta lead form — ${unatt} of ${m.nWon} jobs won in this range have no source.`]);
+  return out.map(([c, h, t]) => `<div class="ins ${c}"><div class="pill">${I[c]}</div><div><h4>${h}</h4><p>${esc(t)}</p></div></div>`).join("");
+}
+function groupBy(arr, k) { const o = {}; for (const r of arr) (o[r[k]] = o[r[k]] || []).push(r); return o; }
+
+function pageSources(R) {
+  const m = metrics(R.from, R.to), op = openDeals();
+  const spendBy = state.rep ? null : (() => { if (R.from < "2026-01-01" || R.to > DATA.spend_through) return null; const s = state.ch; state.ch = ""; const v = spendFor(R.from, R.to, "ch"); state.ch = s; return v; })();
+  const G = k => groupBy(k === "open" ? op.filter(r => r.g === "ready") : m[k], "ch");
+  const L = G("qleads"), A = G("appts"), W = G("won"), Lo = G("lost"), O = G("open");
+  const keys = CH_ORDER.filter(k => L[k] || A[k] || W[k] || Lo[k] || O[k]);
+  const rows = keys.map(k => {
+    const won = W[k] || [], rev = won.reduce((t, r) => t + r.v, 0), sp = spendBy ? spendBy[k] : null;
+    return { k, leads: (L[k] || []).length, appts: (A[k] || []).length, won: won.length, rev, lost: (Lo[k] || []).length, ready: (O[k] || []).reduce((t, r) => t + r.v, 0), sp };
+  }).sort((a, b) => b.rev - a.rev || b.leads - a.leads);
+  const tot = rows.reduce((t, r) => ({ leads: t.leads + r.leads, appts: t.appts + r.appts, won: t.won + r.won, rev: t.rev + r.rev, lost: t.lost + r.lost, ready: t.ready + r.ready, sp: t.sp + (r.sp || 0) }), { leads: 0, appts: 0, won: 0, rev: 0, lost: 0, ready: 0, sp: 0 });
+  const cost = (sp, n) => sp != null && sp > 0 ? fmt$(div(sp, n)) : "—";
+  const table = `<div class="tw"><table><thead><tr><th>Source</th><th>Leads</th><th>Appts</th><th>Lead→appt</th><th>Won</th><th>Revenue</th><th>Close rate</th><th>Win rate</th><th>Ready to sign</th><th>Spend</th><th>CPL</th><th>Cost / appt</th><th>Cost / job</th><th>ROAS</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td>${esc(r.k)} ${r.won < LOWN || r.appts < LOWN ? low(Math.min(r.won, r.appts)) : ""}</td><td>${fmtN(r.leads)}</td><td>${fmtN(r.appts)}</td><td>${r.leads ? fmtP(div(r.appts, r.leads)) : "—"}</td><td>${fmtN(r.won)}</td><td>${fmt$(r.rev)}</td>
+      <td>${r.appts >= r.won && r.appts ? fmtP(div(r.won, r.appts)) : "—"}</td><td>${fmtP(div(r.won, r.won + r.lost))}</td><td>${fmt$(r.ready)}</td>
+      <td>${r.sp ? fmt$(r.sp) : "—"}</td><td>${cost(r.sp, r.leads)}</td><td>${cost(r.sp, r.appts)}</td><td>${cost(r.sp, r.won)}</td><td>${r.sp ? (r.rev / r.sp).toFixed(1) + "×" : "—"}</td></tr>`).join("")}
+    <tr class="total"><td>Total</td><td>${fmtN(tot.leads)}</td><td>${fmtN(tot.appts)}</td><td>${fmtP(div(tot.appts, tot.leads))}</td><td>${fmtN(tot.won)}</td><td>${fmt$(tot.rev)}</td><td>${fmtP(div(tot.won, tot.appts))}</td><td>${fmtP(div(tot.won, tot.won + tot.lost))}</td><td>${fmt$(tot.ready)}</td><td>${tot.sp ? fmt$(tot.sp) : "—"}</td><td></td><td></td><td></td><td></td></tr>
+    </tbody></table></div>
+    <p class="note">Credit goes to the lead's <b>original</b> source (first source on any Lead/Sales deal, then the contact's landing-page UTM). Close rate is blank where wins came from appointments held before this range. ${spendBy ? "Spend: IMKAT ADs Report sheet, prorated by day." : "Spend columns need a range inside Jan 1–Jul 31 2026 (manual sheet) until the Google Ads / Meta APIs are connected."}</p>`;
+  const revRows = rows.filter(r => r.rev > 0).map(r => ({ label: r.k, value: r.rev, color: r.k === "Unattributed" ? "var(--neutral)" : "var(--s1)" }));
+  const rateRows = rows.filter(r => r.appts >= LOWN && r.appts >= r.won).map(r => ({ label: r.k, value: r.won / r.appts, color: r.k === "Unattributed" ? "var(--neutral)" : "var(--s2)", n: r.appts, w: r.won }));
+  const qualRows = rows.filter(r => r.leads >= 20).map(r => ({ label: r.k, value: r.appts / r.leads, color: r.k === "Unattributed" ? "var(--neutral)" : "var(--s3)", n: r.leads, a: r.appts }));
+  // region split per paid channel
+  const rg = ["Sacramento", "Bay Area"];
+  const split = ["Meta Ads", "Google Ads", "Organic / SEO"].map(k => {
+    const vals = rg.map(g => { const a = (A[k] || []).filter(r => r.rg === g).length, w = (W[k] || []).filter(r => r.rg === g).length; return { g, a, w, rev: (W[k] || []).filter(r => r.rg === g).reduce((t, r) => t + r.v, 0), l: (L[k] || []).filter(r => r.rg === g).length }; });
+    return { k, vals };
+  });
+  const splitTable = `<div class="tw"><table><thead><tr><th>Source</th><th class="l">Region</th><th>Leads</th><th>Appts</th><th>Lead→appt</th><th>Won</th><th>Revenue</th><th>Close rate</th></tr></thead><tbody>
+    ${split.flatMap(s => s.vals.map((v, i) => `<tr><td>${i ? "" : esc(s.k)}</td><td class="l"><span class="sw" style="background:${RG_COLOR[v.g]}"></span>${v.g}</td><td>${fmtN(v.l)}</td><td>${fmtN(v.a)}</td><td>${fmtP(div(v.a, v.l))}</td><td>${fmtN(v.w)} ${low(v.w)}</td><td>${fmt$(v.rev)}</td><td>${v.a >= v.w ? fmtP(div(v.w, v.a)) : "—"}</td></tr>`)).join("")}
+  </tbody></table></div>`;
+  return bannerIfOld(R) + `<div class="card span2"><h3>Which sources bring revenue — and what does each cost?</h3><p class="hint">Every source, same period. Low-n rows are flagged.</p>${table}</div>
+    <div class="grid g-3">
+      <div class="card"><h3>Which sources sign the most revenue?</h3><p class="hint">Revenue won by original source.</p>${hbars(revRows, { fmt: fmt$, tipFn: r => tipRows(r.label, [["Revenue won", fmt$full(r.value)]]) })}</div>
+      <div class="card"><h3>Which sources close best?</h3><p class="hint">Jobs won ÷ appointments (10+ appointments).</p>${hbars(rateRows, { fmt: fmtP, tipFn: r => tipRows(r.label, [["Close rate", fmtP(r.value)], ["Won", fmtN(r.w)], ["Appointments", fmtN(r.n)]]) })}</div>
+      <div class="card"><h3>Which sources send leads that book?</h3><p class="hint">Lead quality: appointments ÷ qualified leads (20+ leads).</p>${hbars(qualRows, { fmt: fmtP, tipFn: r => tipRows(r.label, [["Lead → appt", fmtP(r.value)], ["Appointments", fmtN(r.a)], ["Leads", fmtN(r.n)]]) })}</div>
+    </div>
+    <div class="card"><h3>Do paid sources perform differently in Sacramento vs the Bay Area?</h3><p class="hint">Meta, Google and Organic split by region.</p>${splitTable}</div>`;
+}
+
+function repStats(R) {
+  const m = metrics(R.from, R.to), op = DATA.open.filter(r => (!state.ch || r.ch === state.ch) && (!state.rg || r.rg === state.rg));
+  return DATA.reps.map(rep => {
+    const a = m.appts.filter(r => r.rep === rep), w = m.won.filter(r => r.rep === rep), l = m.lost.filter(r => r.rep === rep), o = op.filter(r => r.rep === rep);
+    const valued = w.filter(r => r.v > 0), cyc = w.map(r => r.cyc).filter(v => v != null && v >= 0).sort((x, y) => x - y);
+    const lr = groupBy(l.filter(r => r.lr), "lr"); const topLr = Object.entries(lr).sort((x, y) => y[1].length - x[1].length)[0];
+    return {
+      rep, appts: a.length, cohortW: a.filter(r => r.w).length, won: w.length, lost: l.length, rev: w.reduce((t, r) => t + r.v, 0),
+      avg: div(valued.reduce((t, r) => t + r.v, 0), valued.length), cyc: cyc.length ? cyc[Math.floor(cyc.length / 2)] : null,
+      ready: o.filter(r => r.g === "ready").reduce((t, r) => t + r.v, 0), readyN: o.filter(r => r.g === "ready").length,
+      hold: o.filter(r => r.g === "hold").reduce((t, r) => t + r.v, 0), pre: o.filter(r => r.g === "pre").length,
+      stale: o.filter(r => r.g === "ready" && r.age > 30), lrNote: topLr ? `${topLr[0]} (${topLr[1].length})` : null, lrFilled: l.filter(r => r.lr).length,
+      seg: { ready: o.filter(r => r.g === "ready").reduce((t, r) => t + r.v, 0), pre: o.filter(r => r.g === "pre").reduce((t, r) => t + r.v, 0), hold: o.filter(r => r.g === "hold").reduce((t, r) => t + r.v, 0) }
+    };
+  });
+}
+function pageSales(R) {
+  const st = repStats(R), cohort = state.closeBasis === "cohort";
+  st.forEach(s => { s.rate = cohort ? div(s.cohortW, s.appts) : div(s.won, s.appts); s.win = div(s.won, s.won + s.lost); });
+  const team = st.reduce((t, s) => ({ appts: t.appts + s.appts, won: t.won + s.won, cw: t.cw + s.cohortW, lost: t.lost + s.lost, rev: t.rev + s.rev }), { appts: 0, won: 0, cw: 0, lost: 0, rev: 0 });
+  const teamRate = cohort ? div(team.cw, team.appts) : div(team.won, team.appts);
+  const ranked = [...st].sort((a, b) => b.rev - a.rev);
+  const seg = `<div class="seg" role="group" aria-label="Close rate basis"><button type="button" data-basis="period" aria-pressed="${!cohort}">Same period</button><button type="button" data-basis="cohort" aria-pressed="${cohort}">Appointment cohort</button></div>`;
+  const table = `<div class="tw"><table><thead><tr><th>#</th><th class="l">Rep</th><th>Appts</th><th>Won</th><th>Close rate</th><th>vs team</th><th>Win rate</th><th>Lost</th><th>Revenue</th><th>Avg deal</th><th>Days to close</th><th>Ready to sign</th><th>On hold</th><th>Stale 30d+</th></tr></thead><tbody>
+    ${ranked.map((s, i) => `<tr><td>${i + 1}</td><td class="l"><span class="sw" style="background:${REP_COLOR[s.rep]}"></span><b>${s.rep}</b></td><td>${fmtN(s.appts)}</td><td>${fmtN(cohort ? s.cohortW : s.won)} ${low(cohort ? s.cohortW : s.won)}</td>
+      <td><b>${fmtP(s.rate)}</b></td><td>${s.rate != null && teamRate ? `<span class="tag ${s.rate >= teamRate ? "good" : "bad"}">${s.rate >= teamRate ? "+" : ""}${((s.rate - teamRate) * 100).toFixed(1)} pts</span>` : "—"}</td>
+      <td>${fmtP(s.win)}</td><td>${fmtN(s.lost)}</td><td>${fmt$(s.rev)}</td><td>${fmt$(s.avg)}</td><td>${s.cyc ?? "—"}</td><td>${fmt$(s.ready)} <span class="muted">· ${s.readyN}</span></td><td>${fmt$(s.hold)}</td>
+      <td>${s.stale.length ? `<span class="tag warn">${s.stale.length} · ${fmt$(s.stale.reduce((t, r) => t + r.v, 0))}</span>` : `<span class="tag good">0</span>`}</td></tr>`).join("")}
+    <tr class="total"><td></td><td class="l">Team</td><td>${fmtN(team.appts)}</td><td>${fmtN(cohort ? team.cw : team.won)}</td><td>${fmtP(teamRate)}</td><td></td><td>${fmtP(div(team.won, team.won + team.lost))}</td><td>${fmtN(team.lost)}</td><td>${fmt$(team.rev)}</td><td></td><td></td><td></td><td></td><td></td></tr>
+  </tbody></table></div>
+  <p class="note">${cohort ? "Appointment cohort: of the appointments held in this range, how many of those clients have since signed (any date). Recent months look low until deals have time to close (median ~2 months)." : "Same period: jobs won in the range ÷ appointments held in the range."} Close rate per appointment normalizes for lead volume. Ranked by revenue won. Days to close = median days from lead creation to won.</p>`;
+  const rateRows = st.map(s => ({ label: s.rep, value: s.rate ?? 0, color: REP_COLOR[s.rep], s }));
+  const rateChart = hbars(rateRows, { fmt: fmtP, labelW: 80, tipFn: r => tipRows(r.label, [["Close rate", fmtP(r.value)], ["Appointments", fmtN(r.s.appts)], ["Won", fmtN(cohort ? r.s.cohortW : r.s.won)], ["Team", fmtP(teamRate)]]) });
+  const pipe = stackedH(st.map(s => ({ label: s.rep, seg: s.seg })), ["ready", "pre", "hold"], { labelW: 80 });
+  // rep x region
+  const m = metrics(R.from, R.to);
+  const rgs = ["Sacramento", "Bay Area"];
+  const rr = `<div class="tw"><table><thead><tr><th class="l">Rep</th>${rgs.map(g => `<th>${g} appts</th><th>Won</th><th>Close</th>`).join("")}</tr></thead><tbody>
+    ${st.map(s => `<tr><td class="l"><span class="sw" style="background:${REP_COLOR[s.rep]}"></span>${s.rep}</td>${rgs.map(g => { const a = m.appts.filter(r => r.rep === s.rep && r.rg === g), w = cohort ? a.filter(r => r.w).length : m.won.filter(r => r.rep === s.rep && r.rg === g).length; return `<td>${fmtN(a.length)}</td><td>${fmtN(w)}</td><td>${fmtP(div(w, a.length))} ${low(a.length)}</td>`; }).join("")}</tr>`).join("")}
+  </tbody></table></div>`;
+  // monthly appointments per rep
+  const bk = buckets(R.from, R.to);
+  const apptLines = lines(bk.map(k => k.label), st.map(s => ({ name: s.rep, color: REP_COLOR[s.rep], values: countIn(m.appts.filter(r => r.rep === s.rep), bk) })), { H: 220 });
+  return bannerIfOld(R) + `<div class="card span2"><div class="cardhead"><div><h3>Who's closing — and who needs coaching?</h3><p class="hint">Closers: David, James, Eugene, Avenir. Appointments = walkthroughs booked under each rep.</p></div>${seg}</div>${table}</div>
+    <div class="grid g-2">
+      <div class="card"><h3>How does each rep's close rate compare?</h3><p class="hint">${cohort ? "Appointment cohort" : "Jobs won ÷ appointments, same period"}. Team: ${fmtP(teamRate)}.</p>${rateChart}</div>
+      <div class="card"><h3>How much is each rep sitting on?</h3><p class="hint">Open Sales Pipeline value today, by stage group.</p>${legend([["Ready to sign", GROUP_COLOR.ready], ["Before estimate", GROUP_COLOR.pre], ["On hold / timing", GROUP_COLOR.hold]])}${pipe}</div>
+    </div>
+    <div class="grid g-2">
+      <div class="card"><h3>Is each rep's appointment load steady?</h3><p class="hint">Appointments per ${bk[0] && bk[0].m ? "month" : "week"}.</p>${legend(st.map(s => [s.rep, REP_COLOR[s.rep], 1]))}${apptLines}</div>
+      <div class="card"><h3>Does anyone close better in one market?</h3><p class="hint">Appointments and wins by region.</p>${rr}</div>
+    </div>`;
+}
+
+function pageSpeed(R) {
+  const L = DATA.leads.filter(r => inR(r.d, R.from, R.to) && r.q && dimsOK(r, { noRep: true }));
+  const P = DATA.leads.filter(r => inR(r.d, R.pFrom, R.pTo) && r.q && dimsOK(r, { noRep: true }));
+  const med = arr => { const v = arr.map(r => r.spd).filter(x => x != null).sort((a, b) => a - b); return v.length ? v[Math.floor(v.length / 2)] : null; };
+  const avg = arr => { const v = arr.map(r => r.spd).filter(x => x != null && x < 43200); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+  const never = arr => div(arr.filter(r => r.spd == null).length, arr.length);
+  const in5 = arr => div(arr.filter(r => r.spd != null && r.spd < 5).length, arr.length);
+  const bucketOf = r => r.spd == null ? "Never contacted" : SPEED_BUCKETS.find(b => r.spd >= b[1] && r.spd < b[2])[0];
+  const names = [...SPEED_BUCKETS.map(b => b[0]), "Never contacted"];
+  const counts = names.map(n => L.filter(r => bucketOf(r) === n).length);
+  const bh = L.filter(r => r.bh), ah = L.filter(r => !r.bh);
+  const att = L.filter(r => r.spd != null).map(r => r.a48), attAvg = att.length ? att.reduce((a, b) => a + b, 0) / att.length : null;
+  const byWho = groupBy(L.filter(r => r.by), "by");
+  const whoRows = Object.entries(byWho).filter(([, v]) => v.length >= 5).map(([k, v]) => ({ k, n: v.length, med: med(v), in5: in5(v), a48: v.reduce((t, r) => t + r.a48, 0) / v.length })).sort((a, b) => b.n - a.n);
+  const tiles = [
+    kpi({ label: "Median speed to lead", value: med(L), prev: med(P), fmt: fmtMin, goodUp: false, n: L.length, tipText: "Median time from lead creation to the first human outbound call, text or DM (GHL app/mobile). Automated workflow and bulk messages are excluded, and so are third-party API messages until you confirm what they are." }),
+    kpi({ label: "Average speed to lead", value: avg(L), prev: avg(P), fmt: fmtMin, goodUp: false, tipText: "Mean of the same measure, leaving out leads first reached 30+ days later so a few stale leads don't swamp it." }),
+    kpi({ label: "Contacted within 5 min", value: in5(L), prev: in5(P), fmt: fmtP, pct: true, tipText: "Share of qualified leads with a human outbound touch under 5 minutes." }),
+    kpi({ label: "Never contacted by a person", value: never(L), prev: never(P), fmt: fmtP, pct: true, goodUp: false, tipText: "Share of qualified leads with no human outbound message logged in GHL (they may have received automations only)." }),
+    kpi({ label: "Attempts in first 48 hrs", value: attAvg, prev: null, fmt: v => v.toFixed(1), tipText: "Average number of human outbound calls/texts in the 48 hours after lead creation, for leads that were contacted." })
+  ];
+  const dist = hbars(names.map((n, i) => ({ label: n, value: counts[i], color: n === "Never contacted" ? "var(--neutral)" : "var(--s1)", display: `${fmtN(counts[i])} · ${fmtP(div(counts[i], L.length))}` })), { labelW: 120, tipFn: r => tipRows(r.label, [["Leads", fmtN(r.value)], ["Share", fmtP(div(r.value, L.length))]]) });
+  const hrs = `<div class="tw"><table><thead><tr><th class="l">Lead arrived</th><th>Leads</th><th>Median</th><th>&lt;5 min</th><th>Never contacted</th></tr></thead><tbody>
+    ${[["Business hours", bh], ["After hours / weekend", ah]].map(([n, a]) => `<tr><td class="l">${n}</td><td>${fmtN(a.length)}</td><td>${fmtMin(med(a))}</td><td>${fmtP(in5(a))}</td><td>${fmtP(never(a))}</td></tr>`).join("")}
+  </tbody></table></div><p class="note">Business hours assumed Mon–Fri 8am–6pm PT — tell me yours and I'll update it.</p>`;
+  const who = `<div class="tw"><table><thead><tr><th class="l">First responder</th><th>Leads</th><th>Median</th><th>&lt;5 min</th><th>Attempts / 48 hrs</th></tr></thead><tbody>
+    ${whoRows.map(r => `<tr><td class="l">${esc(r.k)}</td><td>${fmtN(r.n)}</td><td>${fmtMin(r.med)}</td><td>${fmtP(r.in5)}</td><td>${r.a48.toFixed(1)}</td></tr>`).join("") || `<tr><td colspan="5" class="muted">No responder data in this range.</td></tr>`}
+  </tbody></table></div><p class="note">Who sent the first human message. The closers (David, James, Eugene, Avenir) rarely message from GHL, so this measures inside sales.</p>`;
+  const bk = buckets(R.from, R.to);
+  const trend = lines(bk.map(k => k.label), [{ name: "Median minutes", color: "var(--s1)", values: bk.map(k => med(L.filter(r => r.d >= k.a && r.d <= k.b))) }], { fmt: v => fmtMin(v), H: 200 });
+  return bannerIfOld(R) + `<div class="grid g-kpi">${tiles.join("")}</div>
+    <div class="grid g-2">
+      <div class="card"><h3>How fast does a person reach new leads?</h3><p class="hint">Qualified leads by time to first human call/text.</p>${dist}</div>
+      <div class="card"><h3>Is response time getting faster?</h3><p class="hint">Median speed to lead per ${bk[0] && bk[0].m ? "month" : "week"}.</p>${trend}</div>
+    </div>
+    <div class="grid g-2">
+      <div class="card"><h3>Do after-hours leads wait longer?</h3><p class="hint">Split by when the lead arrived.</p>${hrs}</div>
+      <div class="card"><h3>Who answers new leads first?</h3><p class="hint">First human responder, 5+ leads.</p>${who}</div>
+    </div>
+    <div class="banner">${I.warn}<div>Booking and close rate by speed bucket (proof that fast response pays) comes next — it needs your call on the 9,619 third-party "API" messages (SendBlue / dialer?) so the buckets are right.</div></div>`;
+}
+
+function pagePipeline(R) {
+  const op = openDeals(), m = metrics(R.from, R.to);
+  const order = Object.values(op.reduce((o, r) => { (o[r.st] = o[r.st] || { st: r.st, sp: r.sp, g: r.g, n: 0, v: 0, age: [] }); o[r.st].n++; o[r.st].v += r.v; o[r.st].age.push(r.age); return o; }, {})).sort((a, b) => a.sp - b.sp);
+  const stageTable = `<div class="tw"><table><thead><tr><th class="l">Stage</th><th class="l">Group</th><th>Deals</th><th>Value</th><th>Median days in stage</th><th>60+ days</th></tr></thead><tbody>
+    ${order.map(s => { const a = s.age.sort((x, y) => x - y); const md = a[Math.floor(a.length / 2)]; return `<tr><td class="l">${esc(s.st)}</td><td class="l"><span class="tag ${s.g === "ready" ? "ready" : ""}">${GROUP_LABEL[s.g] || "Other"}</span></td><td>${fmtN(s.n)}</td><td><div class="bar-cell">${fmt$(s.v)}<i style="width:${Math.round(60 * s.v / Math.max(...order.map(o => o.v), 1))}px"></i></div></td><td>${md}</td><td>${a.filter(x => x > 60).length}</td></tr>`; }).join("")}
+    <tr class="total"><td class="l">Total open</td><td></td><td>${fmtN(op.length)}</td><td>${fmt$(op.reduce((t, r) => t + r.v, 0))}</td><td></td><td>${op.filter(r => r.age > 60).length}</td></tr>
+  </tbody></table></div>`;
+  const stuck = op.filter(r => r.g === "ready" && r.age > 30).sort((a, b) => b.v - a.v);
+  const stuckT = `<div class="tw"><table><thead><tr><th class="l">Client</th><th class="l">Rep</th><th class="l">Stage</th><th>Value</th><th>Days in stage</th><th class="l">Region</th><th class="l">Source</th></tr></thead><tbody>
+    ${stuck.slice(0, 40).map(r => `<tr><td class="l">${esc(r.nm)}</td><td class="l"><span class="sw" style="background:${REP_COLOR[r.rep] || "var(--neutral)"}"></span>${esc(r.rep)}</td><td class="l">${esc(r.st)}</td><td>${fmt$(r.v)}</td><td><span class="tag ${r.age > 90 ? "bad" : "warn"}">${r.age}</span></td><td class="l">${esc(r.rg)}</td><td class="l muted">${esc(r.ch)}</td></tr>`).join("") || `<tr><td colspan="7" class="muted">No stuck deals for this filter.</td></tr>`}
+  </tbody></table></div>${stuck.length > 40 ? `<p class="note">Showing the 40 largest of ${stuck.length}.</p>` : ""}`;
+  const lr = groupBy(m.lost, "lr"); const lrRows = Object.entries(lr).map(([k, v]) => ({ label: k === "null" ? "No reason given" : k, value: v.length, color: k === "null" ? "var(--neutral)" : "var(--s1)" })).sort((a, b) => b.value - a.value);
+  const lostCh = groupBy(m.lost, "ch");
+  const lostChRows = Object.entries(lostCh).map(([k, v]) => ({ label: k, value: v.length, v: v.reduce((t, r) => t + r.v, 0) })).sort((a, b) => b.value - a.value).slice(0, 8);
+  return bannerIfOld(R) + `<div class="grid g-kpi">
+      ${kpi({ label: "Open pipeline (unweighted)", value: op.reduce((t, r) => t + r.v, 0), prev: null, fmt: fmt$, sub: `<span>${fmtN(op.length)} deals · today</span>`, tipText: "All open Sales Pipeline deals at their GHL monetary value. Not weighted — GHL's stage probabilities are its evenly-spaced defaults, so a forecast waits on real probabilities from you." })}
+      ${kpi({ label: "Ready to sign", value: op.filter(r => r.g === "ready").reduce((t, r) => t + r.v, 0), prev: null, fmt: fmt$, hero: true, sub: `<span>${fmtN(op.filter(r => r.g === "ready").length)} deals</span>`, tipText: "Open deals in estimate-delivered stages." })}
+      ${kpi({ label: "Stuck 30+ days (ready)", value: stuck.reduce((t, r) => t + r.v, 0), prev: null, fmt: fmt$, sub: `<span>${fmtN(stuck.length)} deals</span>`, tipText: "Ready-to-sign deals whose stage hasn't changed in 30+ days." })}
+      ${kpi({ label: "On hold / timing", value: op.filter(r => r.g === "hold").reduce((t, r) => t + r.v, 0), prev: null, fmt: fmt$, sub: `<span>${fmtN(op.filter(r => r.g === "hold").length)} deals</span>`, tipText: "Timing/Future and both On Hold stages." })}
+      ${kpi({ label: "Lost in period", value: m.nLost, prev: metrics(R.pFrom, R.pTo).nLost, fmt: fmtN, goodUp: false, sub: `<span>${fmt$(m.lost.reduce((t, r) => t + r.v, 0))}</span>`, tipText: "Sales Pipeline deals marked Lost in the period (status change date)." })}
+    </div>
+    <div class="card"><h3>Which ready-to-sign deals are stuck?</h3><p class="hint">Estimate delivered, no stage change in 30+ days — largest first. Names shortened for privacy.</p>${stuckT}</div>
+    <div class="grid g-2">
+      <div class="card"><h3>Where is open pipeline sitting?</h3><p class="hint">Open Sales Pipeline by current stage, today.</p>${stageTable}</div>
+      <div class="card"><h3>Why are deals lost?</h3><p class="hint">Lost in period by reason. ${fmtP(div(m.lost.filter(r => !r.lr).length, m.nLost))} have no reason — make it required in GHL.</p>${hbars(lrRows, { labelW: 190 })}
+        <h3 style="margin-top:18px">Where did lost deals come from?</h3><p class="hint">Lost deals by original source.</p>${hbars(lostChRows.map(r => ({ ...r, color: "var(--s2)" })), { labelW: 190, tipFn: r => tipRows(r.label, [["Lost deals", fmtN(r.value)], ["Value", fmt$(r.v)]]) })}</div>
+    </div>
+    <div class="banner">${I.warn}<div>30/60/90-day forecast is switched off: GHL's stage probabilities are evenly-spaced defaults (it lists Lost at 96%). Send real win probabilities per stage and the forecast turns on.</div></div>`;
+}
+
+function pageMarkets(R) {
+  const m = metrics(R.from, R.to), op = openDeals();
+  const rgs = ["Sacramento", "Bay Area", "Outside core markets", "Unknown"];
+  const row = g => { const l = m.qleads.filter(r => r.rg === g), a = m.appts.filter(r => r.rg === g), w = m.won.filter(r => r.rg === g), lo = m.lost.filter(r => r.rg === g), o = op.filter(r => r.rg === g && r.g === "ready"); const rev = w.reduce((t, r) => t + r.v, 0), sp = state.rep ? null : (() => { const s = state.rg; state.rg = g; const v = spendFor(R.from, R.to); state.rg = s; return v; })();
+    return { g, l: l.length, a: a.length, w: w.length, lo: lo.length, rev, ready: o.reduce((t, r) => t + r.v, 0), sp, avg: div(w.filter(r => r.v > 0).reduce((t, r) => t + r.v, 0), w.filter(r => r.v > 0).length) }; };
+  const rows = rgs.map(row).filter(r => r.l + r.a + r.w + r.lo);
+  const tbl = `<div class="tw"><table><thead><tr><th class="l">Region</th><th>Leads</th><th>Appts</th><th>Lead→appt</th><th>Won</th><th>Revenue</th><th>Avg deal</th><th>Close rate</th><th>Win rate</th><th>Lost</th><th>Ready to sign</th><th>Paid spend</th><th>ROAS (all rev.)</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td class="l"><span class="sw" style="background:${RG_COLOR[r.g]}"></span><b>${r.g}</b></td><td>${fmtN(r.l)}</td><td>${fmtN(r.a)}</td><td>${fmtP(div(r.a, r.l))}</td><td>${fmtN(r.w)} ${low(r.w)}</td><td>${fmt$(r.rev)}</td><td>${fmt$(r.avg)}</td><td>${fmtP(div(r.w, r.a))}</td><td>${fmtP(div(r.w, r.w + r.lo))}</td><td>${fmtN(r.lo)}</td><td>${fmt$(r.ready)}</td><td>${r.sp ? fmt$(r.sp) : "—"}</td><td>${r.sp ? (r.rev / r.sp).toFixed(1) + "×" : "—"}</td></tr>`).join("")}
+  </tbody></table></div><p class="note">Region order: GHL "Sacramento Or Bay Area" field → property-address ZIP → contact ZIP → campaign name → phone area code (estimate). Solano County counts as Bay Area. ROAS here divides all revenue won in the region by Meta + Google spend there.</p>`;
+  const bk = buckets(R.from, R.to);
+  const revLines = lines(bk.map(k => k.label), ["Sacramento", "Bay Area"].map(g => ({ name: g, color: RG_COLOR[g], values: countIn(m.won.filter(r => r.rg === g), bk, r => r.v) })), { fmt: fmt$ });
+  const pt = groupBy(m.won, "pt"); const ptRows = Object.entries(pt).map(([k, v]) => ({ label: k, value: v.length, rev: v.reduce((t, r) => t + r.v, 0), color: k === "Unknown" ? "var(--neutral)" : "var(--s1)" })).sort((a, b) => b.value - a.value);
+  const fn = groupBy(m.won, "fn"); const fnRows = Object.entries(fn).map(([k, v]) => ({ label: k, value: v.length, color: k === "Unknown" ? "var(--neutral)" : "var(--s2)" })).sort((a, b) => b.value - a.value);
+  const mo = groupBy(m.won, "mo"); const moRows = Object.entries(mo).map(([k, v]) => ({ label: k, value: v.length, color: k === "Unknown" ? "var(--neutral)" : "var(--s3)" })).sort((a, b) => b.value - a.value);
+  const city = groupBy(m.won.filter(r => r.city), "city"); const cityRows = Object.entries(city).map(([k, v]) => ({ label: k, value: v.reduce((t, r) => t + r.v, 0), n: v.length })).sort((a, b) => b.value - a.value).slice(0, 12);
+  const unknownShare = (rows2, total) => { const u = rows2.find(r => r.label === "Unknown"); return u ? ` ${fmtP(u.value / total)} not filled in.` : ""; };
+  return bannerIfOld(R) + `<div class="card span2"><h3>How does the Bay Area compare with Sacramento?</h3><p class="hint">Every metric by region, same period.</p>${tbl}</div>
+    <div class="grid g-2">
+      <div class="card"><h3>Which market is signing more revenue over time?</h3><p class="hint">Revenue won per ${bk[0] && bk[0].m ? "month" : "week"}.</p>${legend([["Sacramento", RG_COLOR.Sacramento, 1], ["Bay Area", RG_COLOR["Bay Area"], 1]])}${revLines}</div>
+      <div class="card"><h3>Which cities sign the most?</h3><p class="hint">Top 12 cities by revenue won (from property address).</p>${hbars(cityRows.map(r => ({ ...r, color: "var(--s1)" })), { fmt: fmt$, labelW: 130, tipFn: r => tipRows(r.label, [["Revenue", fmt$full(r.value)], ["Jobs", fmtN(r.n)]]) })}</div>
+    </div>
+    <div class="grid g-3">
+      <div class="card"><h3>What are clients building?</h3><p class="hint">Jobs won by project type.${unknownShare(ptRows, m.nWon)}</p>${hbars(ptRows, { labelW: 130, tipFn: r => tipRows(r.label, [["Jobs", fmtN(r.value)], ["Revenue", fmt$(r.rev)]]) })}</div>
+      <div class="card"><h3>How are jobs being paid for?</h3><p class="hint">Jobs won by funding.${unknownShare(fnRows, m.nWon)}</p>${hbars(fnRows, { labelW: 130 })}</div>
+      <div class="card"><h3>Why are homeowners building?</h3><p class="hint">Jobs won by motivation.${unknownShare(moRows, m.nWon)} ${low(m.won.filter(r => r.mo !== "Unknown").length)}</p>${hbars(moRows, { labelW: 130 })}</div>
+    </div>
+    <div class="banner">${I.warn}<div>Events (open houses, seminars) are out of scope for now — you're only using the Lead and Sales pipelines. Event-sourced leads still show up under "Events" on the Sources page.</div></div>`;
+}
+
+function pageHealth() {
+  const h = DATA.health;
+  const mo = h.month.filter(r => r.m >= "2025-01");
+  const cov = lines(mo.map(r => monLabel(r.m)), [{ name: "Leads with a source", color: "var(--s1)", values: mo.map(r => r.att) }, { name: "Leads with a region", color: "var(--s2)", values: mo.map(r => r.reg) }], { fmt: fmtP, pctAxis: true, H: 220 });
+  const st = h.appt_status, stTot = Object.values(st).reduce((a, b) => a + b, 0);
+  const items = [
+    ["Won deals with no source", "bad", `${fmtP(1 - (mo.slice(-9).reduce((t, r) => t + r.att * r.n, 0) / Math.max(1, mo.slice(-9).reduce((t, r) => t + r.n, 0))))} of recent leads have no source. GHL's own UTM / click-ID tracking is filled on under 1% of contacts.`, "Fix: map UTM hidden fields on every form and pass source from Meta Lead Ads."],
+    ["Lost deals with no reason", "bad", `${fmtN(h.lost_no_reason)} of ${fmtN(h.lost_total)} lost Sales deals (${fmtP(h.lost_no_reason / h.lost_total)}).`, "Fix: make lost reason required when a deal is marked Lost."],
+    ["Won deals with $0 value", "warn", `${fmtN(h.won_no_value)} of ${fmtN(h.won_total)} — left out of revenue and average deal.`, "Fix: enter the contract value when marking Won."],
+    ["Unassigned Sales deals", "warn", `${fmtN(h.sales_unassigned)} of ${fmtN(h.sales_total)} Sales Pipeline deals have no owner (or a deleted user).`, "Fix: assign every deal to a closer."],
+    ["Unassigned Lead Pipeline leads", "warn", `${fmtN(h.lead_unassigned)} of ${fmtN(h.lead_total)}.`, "Fix: round-robin assignment in the new-lead workflow."],
+    ["Bulk status updates", "warn", h.bulk_days.map(b => `${b.won} wins on ${niceDate(b.d)}`).join(" · ") + ".", "Won dates on those days aren't real signing dates. From launch, daily snapshots lock in the first won date."],
+    ["Free-text sources", "warn", `${fmtN(h.distinct_sources)} different source spellings on Lead/Sales deals, mapped into ~12 channels.`, "Fix: use a dropdown for source instead of free text."]
+  ];
+  const wf = Object.entries(h.won_fields).map(([k, v]) => ({ label: k.replace("Homeowners Motivation To Build an ADU", "Motivation"), value: v, color: v >= 0.8 ? "var(--s3)" : v >= 0.5 ? "var(--s1)" : "var(--neutral)" }));
+  return `<div class="grid g-2">
+      <div class="card"><h3>Can we trust where leads come from?</h3><p class="hint">Share of new Lead/Sales leads with a source and a region, by month.</p>${legend([["Leads with a source", "var(--s1)", 1], ["Leads with a region", "var(--s2)", 1]])}${cov}
+        <p class="note">Region for 2026 leads: ${Object.entries(h.region_basis).map(([k, v]) => `${k} ${fmtN(v)}`).join(" · ")}. "Phone area code" is an estimate (84% accurate in testing).</p></div>
+      <div class="card"><h3>Which data problems cost us accuracy?</h3><p class="hint">Open issues, most impactful first.</p><div class="health-list">
+        ${items.map(([t, c, d, f]) => `<div><div><b>${esc(t)}</b><p>${esc(d)}</p><p>${esc(f)}</p></div><span class="tag ${c}">${c === "bad" ? "High" : "Medium"}</span></div>`).join("")}
+      </div></div>
+    </div>
+    <div class="grid g-2">
+      <div class="card"><h3>Are won deals filled in?</h3><p class="hint">Share of won Sales deals with each field.</p>${hbars(wf, { fmt: fmtP, labelW: 170 })}</div>
+      <div class="card"><h3>Are appointments being updated?</h3><p class="hint">Past appointments by GHL status. You said confirmed = booked, which is fine; show/no-show isn't tracked.</p>
+        ${hbars(Object.entries(st).sort((a, b) => b[1] - a[1]).map(([k, v]) => ({ label: k, value: v, display: `${fmtN(v)} · ${fmtP(v / stTot)}`, color: "var(--s2)" })), { labelW: 110 })}</div>
+    </div>`;
+}
+
+function pageGlossary() {
+  const g = [
+    ["Lead", "A contact whose first Lead Pipeline or Sales Pipeline deal — or first walkthrough booking — falls in the period. <b>Qualified</b> excludes deals in Fake/Spam Number, Outside Service or No Property."],
+    ["Appointment", "A walkthrough booking (any walkthrough calendar) assigned to David, James, Eugene or Avenir, counted on its appointment date, excluding cancelled/invalid. GHL status “confirmed” = booked."],
+    ["Job won", "Sales Pipeline deal with status <code>won</code>, dated by <code>lastStatusChangeAt</code>. Counted per deal, so multi-unit clients count once per deal."],
+    ["Revenue won", "Sum of GHL monetary value on jobs won. $0-value wins are counted as jobs but add no revenue."],
+    ["Close rate", "<b>Same period:</b> jobs won in range ÷ appointments in range. <b>Appointment cohort:</b> appointments in range whose client later signed a deal ÷ appointments in range."],
+    ["Win rate", "Won ÷ (won + lost), for deals closed in range."],
+    ["Lead → appointment", "Appointments ÷ qualified leads, same period (lead quality)."],
+    ["Average deal", "Revenue won ÷ jobs won with a value above $0."],
+    ["Days to close", "Median days from lead creation to won date."],
+    ["Ready to sign", "Open Sales deals in Estimate Ready (Sales), Proposal Sent to Client, Contact Made/ Pending, Review W/Decision Makers, Looking at Bids, Financing, Review price, Last Chance, New Inside, In-Bound Calls."],
+    ["Before estimate", "Walkthrough Scheduled, Walkthrough Completed, Ready for Estimate (BT), Estimate Needs Revision."],
+    ["On hold / timing", "Timing/ Future, On Hold (0 - 6 months), On Hold (More Than 6 Months). Unqualified Lead is excluded from pipeline value."],
+    ["Stuck / stale", "Ready-to-sign deal with no stage change in 30+ days."],
+    ["Source (channel)", "The lead's <b>original</b> source: the earliest non-empty source on any of their Lead/Sales deals, else the contact source or landing-page UTM. ~990 raw spellings are mapped to channels by fixed rules (<code>etl/mapping.py</code>). No source = <b>Unattributed</b>, never guessed."],
+    ["Region", "Priority: GHL “Sacramento Or Bay Area” field → property-address ZIP → contact ZIP → campaign name → phone area code (estimate). Solano County = Bay Area; Stockton/Modesto = Outside core markets."],
+    ["Paid ad spend", "Meta + Google Ads from the IMKAT ADs Report sheet (Jan–Jul 2026 actuals), prorated by day. Billboard, TV and events are excluded. Switches to the platform APIs once connected."],
+    ["CPL / cost per appointment / cost per job", "Paid spend ÷ qualified leads, appointments or jobs whose original source is Meta or Google."],
+    ["ROAS", "Revenue won from Meta/Google-sourced deals ÷ Meta + Google spend, same period."],
+    ["Speed to lead", "Minutes from lead creation to the first <b>human</b> outbound call, text or DM (GHL <code>source = app</code>). Workflow and bulk messages are excluded; third-party API messages are excluded until confirmed."],
+    ["Attempts in 48 hrs", "Human outbound calls/texts in the 48 hours after lead creation."],
+    ["Low confidence", "Any figure built on fewer than 10 records is flagged <span class=\"low\">low n</span>."],
+    ["% change", "Compared with the previous period of the same length, immediately before the selected range."]
+  ];
+  return `<div class="card"><h3>How is every number calculated?</h3><p class="hint">Definitions used across the dashboard.</p><dl class="gloss">${g.map(([t, d]) => `<dt>${t}</dt><dd>${d}</dd>`).join("")}</dl></div>`;
+}
+
+/* ---------------- render */
+function render() {
+  const R = range();
+  $("#rangeLabel").innerHTML = `<b>${niceDate(R.from)} – ${niceDate(R.to)}</b> · vs ${niceDate(R.pFrom)} – ${niceDate(R.pTo)}`;
+  $("#custom").hidden = state.preset !== "custom";
+  document.querySelectorAll("#presets .chip").forEach(b => b.setAttribute("aria-pressed", b.dataset.p === state.preset));
+  document.querySelectorAll("#tabs .tab").forEach(b => b.setAttribute("aria-selected", b.dataset.page === state.page));
+  const f = { overview: pageOverview, sources: pageSources, sales: pageSales, speed: pageSpeed, pipeline: pagePipeline, markets: pageMarkets, health: pageHealth, glossary: pageGlossary }[state.page];
+  $("#main").innerHTML = `<div class="page">${f(R)}</div>`;
+  $("#main").querySelectorAll("[data-basis]").forEach(b => b.addEventListener("click", () => { state.closeBasis = b.dataset.basis; save(); render(); }));
+}
+function init() {
+  $("#asof").textContent = DATA.generated;
+  $("#tabs").innerHTML = PAGES.map(([k, n]) => `<button class="tab" role="tab" type="button" data-page="${k}">${n}</button>`).join("");
+  $("#tabs").addEventListener("click", e => { const b = e.target.closest(".tab"); if (!b) return; state.page = b.dataset.page; history.replaceState(null, "", "#" + state.page); render(); window.scrollTo({ top: 0 }); });
+  $("#presets").innerHTML = PRESETS.map(([k, n]) => `<button class="chip" type="button" data-p="${k}">${n}</button>`).join("");
+  $("#presets").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return; state.preset = b.dataset.p; save(); render(); });
+  const chs = CH_ORDER.filter(c => DATA.leads.some(r => r.ch === c));
+  $("#fCh").innerHTML = `<option value="">All sources</option>` + chs.map(c => `<option>${esc(c)}</option>`).join("");
+  $("#fRep").innerHTML = `<option value="">All reps</option>` + DATA.reps.map(r => `<option>${r}</option>`).join("");
+  $("#fRg").innerHTML = `<option value="">All regions</option>` + ["Sacramento", "Bay Area", "Outside core markets", "Unknown"].map(r => `<option>${r}</option>`).join("");
+  [["#fCh", "ch"], ["#fRep", "rep"], ["#fRg", "rg"]].forEach(([s, k]) => { const el = $(s); el.value = state[k]; el.addEventListener("change", () => { state[k] = el.value; save(); render(); }); });
+  const R0 = range(); $("#dFrom").value = state.from || R0.from; $("#dTo").value = state.to || R0.to;
+  ["#dFrom", "#dTo"].forEach(s => $(s).addEventListener("change", () => { state.from = $("#dFrom").value; state.to = $("#dTo").value; if (state.from > state.to) [state.from, state.to] = [state.to, state.from]; save(); render(); }));
+  $("#foot").innerHTML = `Source: GoHighLevel (Lead + Sales pipelines, walkthrough calendars, conversations) · Ad spend: IMKAT ADs Report sheet until the Google Ads & Meta APIs are connected · Built by Foreign Media.`;
+  render();
+}
+fetch("data.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(d => { DATA = d; init(); })
+  .catch(err => { $("#main").innerHTML = `<div class="empty">Couldn't load dashboard data (${esc(err.message)}). Reload the page to try again.</div>`; });
+})();
+</script>
