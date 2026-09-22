@@ -69,6 +69,21 @@ There are 9 pipelines. Only **Sales Pipeline** carries deal values and win/loss 
 
 ---
 
+## 2a. Confirmed by Vadim (2026-09-22)
+
+- **Pipelines in scope: Lead Pipeline + Sales Pipeline only.** Open House, ADU Seminar, Inside Sales, Financing, Business Development, Referrers and Event are excluded.
+- **Appointment = any walkthrough booking that isn't cancelled/invalid.** "Confirmed" just means booked. Show/no-show isn't tracked or needed.
+- **Reps: David Dushkov, James Pal, Eugene Nikolaiev, Avenir Golovin.** Appointments are counted by the booking's assigned user across all walkthrough calendars. The shared "Walkthroughs" calendar is also assigned to these reps. 93% of appointments match the Sales Pipeline deal owner.
+- **Rep scorecard:** appointments, won, lost, revenue, close rate (won ÷ appointments), win rate (won ÷ (won + lost)), and the open pipeline "sitting to sign".
+
+**Won/lost dates are only reliable from 2026.** `lastStatusChangeAt` shows bulk updates: **2025-07-17 has 42 wins and 82 losses stamped on one day**, and 2024-09-11 (17 wins), 2025-06-18 (15) and 2025-11-11 (13) are similar. Those are CRM cleanups, not real signing dates. 2026 has no bulk days. **Scorecards default to 2026 YTD.** Earlier periods are shown with a warning.
+
+**"Sitting to sign" stage groups (proposed):**
+- *Ready to sign* (estimate delivered): Estimate Ready (Sales), Proposal Sent to Client, Contact Made/ Pending, Review W/Decision Makers, Looking at Bids, Financing, Review price, Last Chance, New Inside, In-Bound Calls
+- *Pre-estimate*: Walkthrough Scheduled, Walkthrough Completed, Ready for Estimate (BT), Estimate Needs Revision
+- *On hold / future*: Timing/ Future, On Hold (0 - 6 months), On Hold (More Than 6 Months)
+- *Unqualified Lead*: excluded from pipeline value
+
 ## 2. Proposed milestone mapping (please confirm or edit)
 
 | Dashboard milestone | Proposed rule | Confidence |
